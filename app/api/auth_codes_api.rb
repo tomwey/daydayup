@@ -47,7 +47,7 @@ module API
         end
         
         # 发送验证码短信
-        result = send_sms(params[:mobile], "您的验证码是#{code.code}【百家饭】", "获取验证码失败")
+        result = send_sms(params[:mobile], "您的验证码是#{code.code}【Day Day Up】", "获取验证码失败")
         if result['code'].to_i == -1
           # 发送失败，更新每分钟发送限制
           session.delete(sym)
