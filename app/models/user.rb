@@ -20,6 +20,10 @@ class User < ActiveRecord::Base
       nickname: self.nickname || "",
       token: self.private_token || "",
       avatar: self.avatar_url,
+      gender: self.gender || "",
+      age: self.age || "",
+      level: self.level || "",
+      constellation: self.constellation || "",
     }
   end
   
@@ -31,3 +35,8 @@ class User < ActiveRecord::Base
     end
   end
 end
+
+# gender, :integer, default: 1 # 1 表示男，2 表示女，3 表示其他
+# age, :integer
+# level, :integer # 级别
+# constellation, :string # 星座
