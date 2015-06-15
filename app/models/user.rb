@@ -22,9 +22,13 @@ class User < ActiveRecord::Base
       avatar: self.avatar_url,
       gender: self.gender || "",
       age: self.age || "",
-      level: self.level || "",
+      level: self.calcu_level,
       constellation: self.constellation || "",
     }
+  end
+  
+  def calcu_level
+    "LV1"
   end
   
   def avatar_url
