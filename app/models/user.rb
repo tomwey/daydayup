@@ -32,6 +32,7 @@ class User < ActiveRecord::Base
       gender: self.gender || "",
       age: self.age || "",
       level: self.calcu_level,
+      signature: self.signature || "",
       constellation: self.constellation || "",
       followers_count: self.followers_count,
       following_count: self.following_count,
