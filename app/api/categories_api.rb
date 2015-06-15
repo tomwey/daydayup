@@ -5,9 +5,13 @@ module API
     
     resource :types do
       get do
-        @types = Category.sorted
-        all = Category.new(id: 0, name: "全部", goals_count: (@types.to_a.sum { |t| t.goals_count }) )
-        @types.unshift(all)
+        @types = Category.where('name != ?', '全部').sorted
+        all = Category.find_by(name: '全部')
+        unless all.blank?
+          all.goals_count = @types.to_a.sum { |t| t.goals_count }
+          @types.unshift(all)
+        end
+        
         { code: 0, message: "ok", data: @types }
       end
     end # end resource 

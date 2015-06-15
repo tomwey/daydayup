@@ -9,6 +9,7 @@
 
 Category.delete_all
 
+Category.create!(name: "全部", sort: 0)
 Category.create!(name: "健康", sort: 1)
 Category.create!(name: "学习", sort: 2)
 Category.create!(name: "戒烟", sort: 3)
