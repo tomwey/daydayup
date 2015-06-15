@@ -1,4 +1,13 @@
 class User < ActiveRecord::Base
+  
+  # 有许多正在关注的用户
+  has_many :relationships, foreign_key: "follower_id", class_name: "Relationship", dependent: :destroy
+  has_many :following_users, through: :relationships, source: :following
+  
+  # 有许多粉丝
+  has_many :reverse_relationships, foreign_key: "following_id", class_name: "Relationship", dependent: :destroy
+  has_many :followers, through: :reverse_relationships, source: :follower
+  
   validates :mobile, presence: true
   validates :mobile, format: { with: /\A1[3|4|5|8][0-9]\d{4,8}\z/, message: "请输入11位正确手机号" }, 
   length: { is: 11 }, :uniqueness => true
@@ -24,7 +33,43 @@ class User < ActiveRecord::Base
       age: self.age || "",
       level: self.calcu_level,
       constellation: self.constellation || "",
+      followers_count: self.followers_count,
+      following_count: self.following_count,
+      
     }
+  end
+  
+  # 粉丝数
+  def followers_count
+    self.followers.count
+  end
+  
+  # 正在关注的用户数
+  def following_count
+    self.following_users.count
+  end
+  
+  # 判断是否正在关注某个用户
+  def following?(user)
+    return false if user.blank?
+    relationships.find_by(following_id: user.id)
+  end
+  
+  # 关注
+  def follow(user)
+    return false if user.blank?
+    
+    relationships.create(following_id: user.id)
+  end
+  
+  # 取消关注
+  def unfollow(user)
+    return false if user.blank?
+    
+    rs = relationships.find_by(following_id: user.id)
+    return false if rs.blank?
+    
+    rs.destroy
   end
   
   def calcu_level
