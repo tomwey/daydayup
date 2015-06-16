@@ -21,7 +21,7 @@ POST	/account/login
 
 ##### 请求参数
 
-mobile	手机号, 必须
+mobile	手机号, 必须  
 code    手机验证码, 必须
 
 ##### 响应结果
@@ -52,7 +52,7 @@ POST	/user/update_avatar
 
 ##### 请求参数
 
-token	认证token, 必须
+token	认证token, 必须  
 avatar  头像图片数据, 可选
 
 ##### 响应结果
@@ -66,13 +66,13 @@ POST	/user/update_profile
 
 ##### 请求参数
 
-token	      认证token, 必须
-avatar        头像图片数据, 可选
-nickname      用户昵称, 可选
-gender        性别, 可选; 备注：值为1或2, 1表示男, 2表示女
-age           年龄, 可选, 整数
-constellation 星座, 可选
-signature     签名, 可选
+token	      认证token, 必须  
+avatar        头像图片数据, 可选  
+nickname      用户昵称, 可选  
+gender        性别, 可选; 备注：值为1或2, 1表示男, 2表示女  
+age           年龄, 可选, 整数  
+constellation 星座, 可选  
+signature     签名, 可选  
 
 
 ##### 响应结果
