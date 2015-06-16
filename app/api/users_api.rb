@@ -83,6 +83,10 @@ module API
         requires :token, type: String, desc: "Token, 必须"
         optional :avatar, desc: "用户头像图片数据，可选"
         optional :nickname, type: String, desc: "用户昵称，可选"
+        optional :age, type: Integer, desc: "年龄, 可选"
+        optional :gender, type: Integer, desc: "性别，可选"
+        optional :constellation, type: String, desc: "星座"
+        optional :signature, type: String, desc: "签名"
       end
       
       post :update_profile do
@@ -94,6 +98,22 @@ module API
         
         if params[:nickname]
           user.nickname = params[:nickname]
+        end
+        
+        if params[:age]
+          user.age = params[:age]
+        end
+        
+        if params[:gender]
+          user.gender = params[:gender]
+        end
+        
+        if params[:constellation]
+          user.constellation = params[:constellation]
+        end
+        
+        if params[:signature]
+          user.signature = params[:signature]
         end
         
         if user.save
