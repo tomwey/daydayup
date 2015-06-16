@@ -7,6 +7,9 @@ class Goal < ActiveRecord::Base
   
   belongs_to :user
   belongs_to :category, counter_cache: true
+  
+  mount_uploader :image, ImageUploader
+  
 end
 
 # t.string :title, :null => false
@@ -16,3 +19,4 @@ end
 # t.integer :category_id
 # t.integer :user_id
 # t.boolean :is_supervise, default: true
+# t.string :image
