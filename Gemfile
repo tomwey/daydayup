@@ -51,6 +51,8 @@ gem 'state_machine'
 
 gem 'rest-client'
 
+gem 'newrelic-grape'
+
 gem 'jpush'
 
 gem 'rack-cors', require: 'rack/cors'

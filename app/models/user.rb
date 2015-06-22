@@ -1,5 +1,7 @@
 class User < ActiveRecord::Base
   
+  attr_accessor :is_followed
+  
   # 有许多正在关注的用户
   has_many :relationships, foreign_key: "follower_id", class_name: "Relationship", dependent: :destroy
   has_many :following_users, through: :relationships, source: :following
@@ -36,7 +38,7 @@ class User < ActiveRecord::Base
       constellation: self.constellation || "",
       followers_count: self.followers_count,
       following_count: self.following_count,
-      
+      is_followed: self.is_followed || false,
     }
   end
   
@@ -53,7 +55,7 @@ class User < ActiveRecord::Base
   # 判断是否正在关注某个用户
   def following?(user)
     return false if user.blank?
-    relationships.find_by(following_id: user.id)
+    relationships.find_by(following_id: user.id).present?
   end
   
   # 关注

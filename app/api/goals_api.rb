@@ -22,8 +22,12 @@ module API
         @goals = @goals.paginate(page: params[:page], per_page: page_size).all
         
         user = User.find_by(private_token: params[:token])
-        @goals = @goals.owner(user)
-        
+        if user.present?
+          @goals.each do |g|
+            g.user.is_followed = user.following?(g.user)
+          end
+        end
+
         { code: 0, message: 'ok', data: @goals }
       end
     end # end resource 
