@@ -1,5 +1,7 @@
 class Goal < ActiveRecord::Base
   
+  attr_accessor :is_cheered, :is_followed
+  
   GEO_FACTORY = RGeo::Geographic.spherical_factory(srid: 4326)
   
   set_rgeo_factory_for_column :location, GEO_FACTORY
@@ -10,6 +12,7 @@ class Goal < ActiveRecord::Base
   belongs_to :category, counter_cache: true
   
   has_many :notes, dependent: :destroy
+  has_many :cheers
   
   mount_uploader :image, ImageUploader
   
@@ -24,6 +27,9 @@ class Goal < ActiveRecord::Base
       note: self.recent_note,
       type: self.category || {},
       owner: self.user || {},
+      is_supervised: false,
+      is_cheered: self.is_cheered,
+      is_followed: self.is_followed,
     }
   end
   

@@ -4,6 +4,9 @@ module API
   class GoalsAPI < Grape::API
     
     resource :goals do
+      
+      # 获取目标列表
+      desc "获取目标列表"
       params do
         requires :type_id, type: Integer, desc: "类别ID"
         optional :token, type: String, desc: "认证Token"
@@ -29,7 +32,31 @@ module API
         end
 
         { code: 0, message: 'ok', data: @goals }
+      end # end /:filter
+      
+      # 获取目标详情
+      desc "获取目标详情"
+      params do 
+        optional :token, type: String, desc: "认证Token"
       end
+      get '/show/:id' do
+        @goal = Goal.find_by(id: params[:id])
+        if @goal.blank?
+          return { code: 0, message: 'ok', data: {} }
+        end
+        
+        user = User.find_by(private_token: params[:token])
+        if user
+          @goal.is_cheered = Cheer.where('user_id = ? and goal_id = ?', user.id, @goal.id).count > 0
+          @goal.is_followed = Follow.where('user_id = ? and goal_id = ?', user.id, @goal.id).count > 0
+        else
+          @goal.is_cheered = false
+          @goal.is_followed = false
+        end
+        
+        { code: 0, message: 'ok', data: @goal || {} }
+      end # end show/:id
+      
     end # end resource 
     
   end
