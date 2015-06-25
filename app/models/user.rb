@@ -92,6 +92,46 @@ class User < ActiveRecord::Base
     like.destroy
   end
   
+  # 关注目标
+  def follow_goal(goal)
+    return false if goal.blank?
+    
+    Follow.create(user_id: self.id, goal_id: goal.id)
+  end
+  
+  # 判断是否正在关注某个目标
+  def following_goal?(goal)
+    return false if goal.blank?
+    Follow.where(user_id: user.id, goal_id: goal.id).count > 0
+  end
+  
+  # 取消关注目标
+  def unfollow_goal(goal)
+    return false if goal.blank?
+    
+    follow = Follow.where(user_id: self.id, goal_id: goal.id).first
+    return false if follow.blank?
+    
+    follow.destroy
+  end
+  
+  # 加油目标
+  def cheer(goal)
+    return false if goal.blank?
+    
+    Cheer.create(user_id: self.id, goal_id: goal.id)
+  end
+  
+  # 取消加油目标
+  def uncheer(goal)
+    return false if goal.blank?
+    
+    cheer = Cheer.where(user_id: self.id, goal_id: goal.id).first
+    return false if cheer.blank?
+    
+    cheer.destroy
+  end
+  
   def calcu_level
     "LV1"
   end

@@ -56,13 +56,14 @@ module API
     end
     
     class GoalDetail < BaseEntity
-      expose :id, :title, :body
+      expose :id, :title, :body, :cheers_count, :follows_count
       expose :category, as: :type, using: API::Entities::Category
       expose :user, as: :owner, using: API::Entities::User
       expose :notes, using: API::Entities::GoalNoteDetail do |model, opts|
         model.notes.order('id desc')
       end
-      # expose :is_supervised, :is_cheered, :is_followed
+      
+      expose :is_supervised, :is_cheered, :is_followed
     end
   end
 end

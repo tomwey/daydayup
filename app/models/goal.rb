@@ -18,16 +18,16 @@ class Goal < ActiveRecord::Base
   
   scope :hot, -> { order('cheers_count desc, follows_count desc, id desc') }
   scope :recent, -> { order('id desc') }
-  scope :unsupervise, -> { where(is_supervise: true).order('id desc') }
+  scope :unsupervise, -> { where('is_supervise = ? and supervisor_id is null', true).order('id desc') }
   
   def as_json(opts = {})
     {
       id: self.id,
       title: self.title || "",
-      note: self.recent_note,
+      note: self.recent_note || {},
       type: self.category || {},
       owner: self.user || {},
-      is_supervised: false,
+      is_supervised: !!self.supervisor_id,
       is_cheered: self.is_cheered || false,
       is_followed: self.is_followed || false,
     }
@@ -42,7 +42,7 @@ class Goal < ActiveRecord::Base
   end
   
   def recent_note
-    notes.order('id desc').limit(1)
+    notes.order('id desc').first
   end
   
 end
