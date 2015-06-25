@@ -23,8 +23,9 @@ module API
         @note.goal_id = @goal.id
         @note.body = params[:body]
         
-        params[:photos].each do |p|
-          p = Photo.create!(image: p[:image])
+        puts params[:photos]
+        params[:photos].each do |param|
+          p = Photo.create!(image: param[:image])
           @note.photos << p
         end
         

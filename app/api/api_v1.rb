@@ -7,6 +7,7 @@ require "users_api"
 require "categories_api"
 require "banners_api"
 require "goals_api"
+require "notes_api"
 
 module API
   class APIV1 < Grape::API
@@ -37,6 +38,7 @@ module API
     mount API::CategoriesAPI
     mount API::BannersAPI
     mount API::GoalsAPI
+    mount API::NotesAPI
     
   end
 end
