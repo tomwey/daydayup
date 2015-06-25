@@ -1,6 +1,7 @@
 class Note < ActiveRecord::Base
   
   has_many :photos, dependent: :destroy
+  has_many :comments, dependent: :destroy
   belongs_to :goal
   
   def as_json(opts = {})

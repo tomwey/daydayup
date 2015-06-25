@@ -46,6 +46,70 @@ module API
     
     resource :user do
       
+      # 关注某一个用户
+      desc "关注某一个用户"
+      params do
+        requires :token, type: String, desc: "Token, 必须"
+        requires :user_id, type: Integer, desc: "被关注人的id, 必须"
+      end
+      post '/friendships/create' do
+        user = authenticate!
+        
+        if user.follow(User.find_by(id: params[:user_id]))
+          { code: 0, message: "ok" }
+        else
+          { code: 1011, message: "关注失败" }
+        end
+        
+      end # end follow user
+      
+      # 取消关注某一个用户
+      desc "取消关注某一个用户"
+      params do
+        requires :token, type: String, desc: "Token, 必须"
+        requires :user_id, type: Integer, desc: "被关注人的id, 必须"
+      end
+      post '/friendships/destroy' do
+        user = authenticate!
+        
+        if user.unfollow(User.find_by(id: params[:user_id]))
+          { code: 0, message: "ok" }
+        else
+          { code: 1012, message: "取消关注失败" }
+        end
+        
+      end # end follow user
+      
+      # 赞某个用户的某一目标的某条记录
+      params do
+        requires :token, type: String, desc: "Token, 必须"
+        requires :note_id, type: Integer, desc: "记录id, 必须"
+      end
+      post '/likes/create' do
+        user = authenticate!
+        
+        if user.like(Note.find_by(id: params[:note_id]))
+          { code: 0, message: "ok" }
+        else
+          { code: 1013, message: "点赞失败" }
+        end
+      end # end like note
+      
+      # 取消赞某个用户的某一目标的某条记录
+      params do
+        requires :token, type: String, desc: "Token, 必须"
+        requires :note_id, type: Integer, desc: "记录id, 必须"
+      end
+      post '/likes/destroy' do
+        user = authenticate!
+        
+        if user.unlike(Note.find_by(id: params[:note_id]))
+          { code: 0, message: "ok" }
+        else
+          { code: 1014, message: "取消点赞失败" }
+        end
+      end # end unlike note
+      
       # 获取用户个人资料
       params do
         requires :token, type: String, desc: "Token, 必须"

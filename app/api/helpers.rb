@@ -24,6 +24,11 @@ module API
       [size, max_page_size].min
     end
     
+    def render_json(target, grape_entity)
+      present target, :with => grape_entity
+      body ( { code: 0, message:'ok', data: body } )
+    end
+    
     # 当前登录用户
     def current_user
       token = params[:token]

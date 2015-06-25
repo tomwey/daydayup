@@ -75,6 +75,23 @@ class User < ActiveRecord::Base
     rs.destroy
   end
   
+  # 点赞记录
+  def like(note)
+    return false if note.blank?
+    
+    Like.create(user_id: self.id, note_id: note.id)
+  end
+  
+  # 取消点赞
+  def unlike(note)
+    return false if note.blank?
+    
+    like = Like.where(user_id: self.id, note_id: note.id).first
+    return false if like.blank?
+    
+    like.destroy
+  end
+  
   def calcu_level
     "LV1"
   end

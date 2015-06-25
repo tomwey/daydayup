@@ -54,8 +54,22 @@ module API
           @goal.is_followed = false
         end
         
-        { code: 0, message: 'ok', data: @goal || {} }
+        render_json(@goal, API::Entities::GoalDetail)
+        
       end # end show/:id
+      
+      # 获取记录详情
+      desc "获取记录详情"
+      params do
+        optional :token, type: String, desc: "认证Token"
+      end
+      get '/:goal_id/notes/:note_id' do
+        @goal = Goal.find(params[:goal_id])
+        @note = @goal.notes.find_by(id: params[:note_id])
+        
+        render_json(@note, API::Entities::NoteDetail)
+        
+      end
       
     end # end resource 
     

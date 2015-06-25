@@ -28,8 +28,8 @@ class Goal < ActiveRecord::Base
       type: self.category || {},
       owner: self.user || {},
       is_supervised: false,
-      is_cheered: self.is_cheered,
-      is_followed: self.is_followed,
+      is_cheered: self.is_cheered || false,
+      is_followed: self.is_followed || false,
     }
   end
   
