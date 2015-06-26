@@ -30,7 +30,25 @@ class Goal < ActiveRecord::Base
       is_supervised: !!self.supervisor_id,
       is_cheered: self.is_cheered || false,
       is_followed: self.is_followed || false,
+      latitude: latitude,
+      longitude: longitude,
     }
+  end
+  
+  def latitude
+    if location
+      location.y || ""
+    else
+      ""
+    end
+  end
+  
+  def longitude
+    if location
+      location.x || ""
+    else
+      ""
+    end
   end
   
   def self.owner(owner)

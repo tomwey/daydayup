@@ -44,6 +44,26 @@ module API
       
     end # end account resource
     
+    resource :users do
+      # 排行榜
+      # goal_geek, supervise_geek, popular_geek
+      desc "达人排名"
+      get '/:filter' do
+        @users = User.send(params[:filter].to_sym).order('id DESC').paginate(page: params[:page], per_page: page_size)
+        { code: 0, message: "ok", data: @users }
+      end
+      
+      # 获取用户详情
+      desc "获取用户详情"
+      get '/show/:id' do
+        @user = User.find_by(id: params[:id])
+        
+        render_json(@user, API::Entities::UserDetail)
+        
+      end
+      
+    end # end users resource
+    
     resource :user do
       
       # 关注某一个用户

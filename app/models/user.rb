@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
   has_many :reverse_relationships, foreign_key: "following_id", class_name: "Relationship", dependent: :destroy
   has_many :followers, through: :reverse_relationships, source: :follower
   
+  has_many :goals, dependent: :destroy
+  
   validates :mobile, presence: true
   validates :mobile, format: { with: /\A1[3|4|5|8][0-9]\d{4,8}\z/, message: "请输入11位正确手机号" }, 
   length: { is: 11 }, :uniqueness => true
@@ -17,6 +19,10 @@ class User < ActiveRecord::Base
   validates :nickname, uniqueness: true, allow_nil: true
             
   mount_uploader :avatar, AvatarUploader
+  
+  scope :goal_geek, -> {  }
+  scope :supervise_geek, -> { order('supervises_count desc') }
+  scope :popular_geek, -> { order('followers_count desc') }
   
   after_create :generate_private_token
   def generate_private_token
@@ -38,19 +44,20 @@ class User < ActiveRecord::Base
       constellation: self.constellation || "",
       followers_count: self.followers_count,
       following_count: self.following_count,
+      supervises_count: self.supervises_count,
       is_followed: self.is_followed || false,
     }
   end
   
-  # 粉丝数
-  def followers_count
-    self.followers.count
-  end
-  
-  # 正在关注的用户数
-  def following_count
-    self.following_users.count
-  end
+  # # 粉丝数
+  # def followers_count
+  #   self.followers.count
+  # end
+  #
+  # # 正在关注的用户数
+  # def following_count
+  #   self.following_users.count
+  # end
   
   # 判断是否正在关注某个用户
   def following?(user)
@@ -62,7 +69,10 @@ class User < ActiveRecord::Base
   def follow(user)
     return false if user.blank?
     
-    relationships.create(following_id: user.id)
+    relationships.create!(following_id: user.id)
+    
+    self.update_attribute(:following_count, self.following_count + 1)
+    user.update_attribute(:followers_count, user.followers_count + 1)
   end
   
   # 取消关注
@@ -73,6 +83,9 @@ class User < ActiveRecord::Base
     return false if rs.blank?
     
     rs.destroy
+    
+    self.update_attribute(:following_count, self.following_count - 1) if (self.following_count - 1) >= 0
+    user.update_attribute(:followers_count, user.followers_count - 1) if (user.followers_count - 1) >= 0
   end
   
   # 点赞记录
@@ -130,6 +143,11 @@ class User < ActiveRecord::Base
     return false if cheer.blank?
     
     cheer.destroy
+  end
+  
+  # 更新督促目标数
+  def change_supervises_count(n)
+    self.update_attribute(:supervises_count, self.supervises_count + n) if ( self.supervises_count + n ) >= 0
   end
   
   def calcu_level

@@ -5,6 +5,41 @@ module API
     
     resource :goals do
       
+      # 获取附近的目标
+      desc "获取附近的目标"
+      params do
+        requires :latitude, type: String, desc: "纬度，数字字符串，必须"
+        requires :longitude, type: String, desc: "经度，数字字符串，必须"
+        optional :gender, type: Integer, desc: "性别，如果gender不传则表示加载全部"
+        optional :type_id, type: Integer, desc: "类别id"
+        optional :token, type: String, desc: "认证Token"
+      end
+      get :nearby do
+        @goals = Goal.select("goals.*, st_distance(location, 'point(#{params[:longitude]} #{params[:latitude]})') as distance").order("distance ASC, id DESC")
+        
+        if params[:gender]
+          @goals = @goals.joins(:user).where('users.gender = ?', params[:gender])
+        end
+        
+        if params[:type_id]
+          @type = Category.find_by(id: params[:type_id])
+          if @type and @type.name != '全部'
+            @goals = @goals.joins(:category).where('categories.id = ?', params[:type_id])
+          end
+        end
+        
+        @goals = @goals.paginate(page: params[:page], per_page: page_size).all
+        
+        user = User.find_by(private_token: params[:token])
+        if user.present?
+          @goals.each do |g|
+            g.user.is_followed = user.following?(g.user)
+          end
+        end
+        
+        { code: 0, message: 'ok', data: @goals }
+      end # end nearby
+      
       # 获取目标列表
       desc "获取目标列表"
       params do
@@ -141,6 +176,7 @@ module API
         @goal = Goal.find(params[:goal_id])
         
         if @goal.update_attribute(:supervisor_id, user.id)
+          user.change_supervises_count(1)
           { code: 0, message: "ok" }
         else
           { code: 2003, message: "督促失败" }

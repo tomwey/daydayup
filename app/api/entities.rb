@@ -24,6 +24,27 @@ module API
       expose :body, format_with: :null
     end
     
+    class UserGoalDetail < BaseEntity
+      expose :title, format_with: :null
+      expose :body, format_with: :null
+      expose :expired_at, format_with: :chinese_datetime
+      expose :category, as: :type, using: API::Entities::Category
+      expose :user, as: :owner, using: API::Entities::User
+    end
+    
+    class UserDetail < BaseEntity
+      expose :mobile, format_with: :null
+      expose :nickname, format_with: :null
+      expose :signature, format_with: :null
+      expose :gender, format_with: :null
+      expose :constellation, format_with: :null
+      expose :followers_count, :supervises_count
+      expose :completed_goals_count do |model, opts|
+        model.goals.where('expired_at <= ?', Time.now).count
+      end
+      expose :goals, using: API::Entities::UserGoalDetail
+    end
+        
     class PhotoDetail < BaseEntity
       
     end
