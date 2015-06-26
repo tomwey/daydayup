@@ -66,6 +66,33 @@ module API
     
     resource :user do
       
+      # 我的目标
+      desc "我的目标"
+      params do
+        requires :token, type: String, desc: "Token"
+      end
+      get :goals do
+        user = authenticate!
+      end # end 
+      
+      # 我督促的目标
+      desc "我督促的目标"
+      params do
+        requires :token, type: String, desc: "Token"
+      end
+      get :supervised_goals do
+        
+      end
+      
+      # 我关注的目标
+      desc "我关注的目标"
+      params do
+        requires :token, type: String, desc: "Token"
+      end
+      get :followed_goals do
+        
+      end
+      
       # 关注某一个用户
       desc "关注某一个用户"
       params do
