@@ -98,7 +98,7 @@ module API
             expired_at: @goal.expired_at.strftime('%Y-%m-%d %H:%M:%S'),
             follows_count: @goal.follows_count,
             cheers_count: @goal.cheers_count,
-            is_supervised: !!@goal.supervisor_id,
+            is_supervised: @goal.is_supervised?,
             is_cheered: @goal.is_cheered || false,
             is_followed: @goal.is_followed || false,
             notes: @goal.notes.order('id desc') || [],
@@ -166,22 +166,22 @@ module API
       end # end 取消关注目标
       
       # 督促目标
-      desc "督促目标"
-      params do
-        requires :token, type: String, desc: "认证Token"
-      end
-      post '/:goal_id/supervise' do
-        user = authenticate!
-        
-        @goal = Goal.find(params[:goal_id])
-        
-        if @goal.update_attribute(:supervisor_id, user.id)
-          user.change_supervises_count(1)
-          { code: 0, message: "ok" }
-        else
-          { code: 2003, message: "督促失败" }
-        end
-      end # end supervise
+      # desc "督促目标"
+      # params do
+      #   requires :token, type: String, desc: "认证Token"
+      # end
+      # post '/:goal_id/supervise' do
+      #   user = authenticate!
+      #
+      #   @goal = Goal.find(params[:goal_id])
+      #
+      #   # if @goal.update_attribute(:supervisor_id, user.id)
+      #   #   user.change_supervises_count(1)
+      #   #   { code: 0, message: "ok" }
+      #   # else
+      #   #   { code: 2003, message: "督促失败" }
+      #   # end
+      # end # end supervise
       
       # 给目标加油
       desc "给目标加油"
@@ -214,6 +214,40 @@ module API
         end
         
       end # end uncheer
+      
+      # 放弃目标
+      desc "放弃目标"
+      params do
+        requires :token, type: String, desc: "认证Token"
+      end
+      post '/:goal_id/abandon' do
+        user = authenticate!
+        
+        @goal = user.goals.find(params[:goal_id])
+        
+        if @goal.update_attribute(:is_abandon, true)
+          { code: 0, message: "ok" }
+        else
+          { code: 2005, message: "放弃目标失败" }
+        end
+      end # end abandon
+      
+      # 删除目标
+      desc "删除目标"
+      params do
+        requires :token, type: String, desc: "认证Token"
+      end
+      post '/:goal_id/delete' do
+        user = authenticate!
+        
+        @goal = user.goals.find(params[:goal_id])
+        
+        if @goal.update_attribute(:visible, false)
+          { code: 0, message: "ok" }
+        else
+          { code: 2006, message: "删除目标失败" }
+        end
+      end # end delete
       
     end # end resource 
     

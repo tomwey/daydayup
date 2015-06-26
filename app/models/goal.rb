@@ -14,11 +14,15 @@ class Goal < ActiveRecord::Base
   has_many :notes, dependent: :destroy
   has_many :cheers
   
+  has_one :supervise
+  
   mount_uploader :image, ImageUploader
   
-  scope :hot, -> { order('cheers_count desc, follows_count desc, id desc') }
-  scope :recent, -> { order('id desc') }
-  scope :unsupervise, -> { where('is_supervise = ? and supervisor_id is null', true).order('id desc') }
+  scope :no_deleted, -> { where(visible: true) }
+  scope :no_abandon, -> { no_deleted.where(is_abandon: false) }
+  scope :hot, -> { no_abandon.order('cheers_count desc, follows_count desc, id desc') }
+  scope :recent, -> { no_abandon.order('id desc') }
+  # scope :unsupervise, -> { where('is_supervise = ? and supervisor_id is null', true).order('id desc') }
   
   def as_json(opts = {})
     {
@@ -27,12 +31,17 @@ class Goal < ActiveRecord::Base
       note: self.recent_note || {},
       type: self.category || {},
       owner: self.user || {},
-      is_supervised: !!self.supervisor_id,
+      is_supervised: self.is_supervised?,
       is_cheered: self.is_cheered || false,
       is_followed: self.is_followed || false,
       latitude: latitude,
       longitude: longitude,
     }
+  end
+  
+  def is_supervised?
+    supervise = Supervise.where(goal_id: self.id, accepted: true).first
+    !!supervise
   end
   
   def latitude
