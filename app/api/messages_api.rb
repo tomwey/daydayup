@@ -4,6 +4,21 @@ module API
   class MessagesAPI < Grape::API
     
     resource :messages do
+      # 发送消息
+      desc "发送聊天信息"
+      params do
+        requires :token, type: String, desc: "Token"
+        requires :content, type: String, desc: "聊天内容"
+        requires :receiver_id, type: Integer, desc: "接收消息者id"
+      end
+      post :send do
+        sender = authenticate!
+        
+        m = Talk.create!(sender_id: sender.id, receiver_id: params[:receiver_id], content: params[:content])
+        
+        { code: 0, message: "ok", data: m }
+      end # end send
+      
       # 获取未读消息
       desc "获取未读消息条数"
       params do
@@ -21,7 +36,15 @@ module API
         
         total = Message.unread.where('message_type != 1 and user_id = ?', user.id).count
         
-        { code: 0, message: "ok", data: { total: total + sys_msg_total } }
+        # 检测聊天记录
+        # if user.last_read_talk_at.blank?
+        #   talk_total = Talk.where('receiver_id = ?', user.id).count
+        # else
+        #   talk_total = Talk.where('created_at > ? and receiver_id = ?', user.last_read_talk_at, user.id).count
+        # end
+        talk_total = Talk.where('read = ? and receiver_id = ?', false, user.id).count
+        
+        { code: 0, message: "ok", data: { total: ( total + sys_msg_total + talk_total ) } }
         
       end # end /unread
       
@@ -54,6 +77,18 @@ module API
           
         end
         
+        # 获取聊天信息
+        sender_ids = Talk.select('sender_id').group(:sender_id).map(&:sender_id)
+        sender_ids.each do |id|
+          talk = Talk.where('receiver_id = ? and sender_id = ?', user.id, id).order('id DESC').first
+          count = Talk.where('sender_id = ? and read = ?', id, false).count
+          
+          if talk
+            item << { type: 5, unread_messages_count: count, latest_message: talk }
+          end
+          
+        end
+        
         { code: 0, message: "ok", data: item }
       end # end list
       
@@ -77,6 +112,20 @@ module API
         
         { code: 0, message: "ok", data: @messages }
       end # end read
+      
+      # 获取某个用户聊天记录
+      desc "获取某个用户发出的聊天记录"
+      params do
+        requires :token, type: String, desc: "Token"
+        requires :sender_id, type: Integer, desc: "发送消息者id"
+      end
+      get :fetch do
+        user = authenticate!
+        
+        @talks = Talk.where('sender_id = ? and receiver_id = ?', params[:sender_id], user.id)
+        
+        { code: 0, message: "ok", data: @talks }
+      end
       
     end # end resource 
     
