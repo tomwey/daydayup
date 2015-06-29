@@ -24,12 +24,31 @@ module API
       expose :body, format_with: :null
     end
     
+    # class Supervise < BaseEntity
+    #   expose :user, as: :supervisor, using: API::Entities::User
+    # end
+    
     class UserGoalDetail < BaseEntity
       expose :title, format_with: :null
       expose :body, format_with: :null
       expose :expired_at, format_with: :chinese_datetime
       expose :category, as: :type, using: API::Entities::Category
       expose :user, as: :owner, using: API::Entities::User
+    end
+    
+    class MyGoalDetail < BaseEntity
+      expose :title, format_with: :null
+      expose :body, format_with: :null
+      expose :expired_at, format_with: :chinese_datetime
+      expose :category, as: :type, using: API::Entities::Category
+      expose :user, as: :owner, using: API::Entities::User
+      expose :supervise, as: :supervisor do |model, opts|
+        if model.supervise.blank?
+          {}
+        else
+          model.supervise.user.as_json
+        end
+      end
     end
     
     class UserDetail < BaseEntity

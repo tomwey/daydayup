@@ -101,7 +101,7 @@ module API
             is_supervised: @goal.is_supervised?,
             is_cheered: @goal.is_cheered || false,
             is_followed: @goal.is_followed || false,
-            notes: @goal.notes.order('id desc') || [],
+            notes: @goal.notes.includes(:photos).order('id desc') || [],
             type: @goal.category || {},
             owner: @goal.user || {},
         } }
