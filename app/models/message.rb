@@ -12,11 +12,26 @@ class Message < ActiveRecord::Base
   def as_json(opts = {})
     {
       id: self.id,
-      content: self.body || '',
       type: self.message_type,
+      content: self.content,
       send_time: self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
       actor: self.actor || {},
     }
+  end
+  
+  def content
+    case self.message_type.to_i
+    when 1 then self.body || ''
+    when 2 then self.goal_title
+    when 3 then self.goal_title
+    when 4 then '关注了我'
+    else ''
+    end
+  end
+  
+  def goal_title
+    goal_id = self.body.split('-').first
+    Goal.find_by(id: goal_id).try(:title)
   end
   
 end

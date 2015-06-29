@@ -49,7 +49,7 @@ module API
           end
           
           if message
-            item << { type: type, unread_messages_count: count, latest_message: message || {} }
+            item << { type: type, unread_messages_count: count, latest_message: message }
           end
           
         end
