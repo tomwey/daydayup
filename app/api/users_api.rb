@@ -73,6 +73,10 @@ module API
       end
       get :goals do
         user = authenticate!
+        
+        @goals = user.goals.includes(:supervise).no_deleted.paginate page: params[:page], per_page: page_size
+        
+        render_json(@goals, API::Entities::MyGoalDetail)
       end # end 
       
       # 我督促的目标
@@ -81,7 +85,11 @@ module API
         requires :token, type: String, desc: "Token"
       end
       get :supervised_goals do
+        user = authenticate!
         
+        @goals = Goal.joins(:supervise).where('supervises.user_id = ?', user.id).no_deleted.paginate page: params[:page], per_page: page_size
+        
+        render_json(@goals, API::Entities::MyGoalDetail)
       end
       
       # 我关注的目标
@@ -90,7 +98,11 @@ module API
         requires :token, type: String, desc: "Token"
       end
       get :followed_goals do
+        user = authenticate!
         
+        @goals = user.followed_goals.no_deleted.paginate page: params[:page], per_page: page_size
+        
+        render_json(@goals, API::Entities::MyGoalDetail)
       end
       
       # 关注某一个用户

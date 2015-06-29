@@ -23,6 +23,8 @@ gem 'bootstrap_helper', '4.2.3'
 # YAML 配置信息
 gem 'settingslogic', '~> 2.0.9'
 
+gem 'jpush'
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'
 # Use Uglifier as compressor for JavaScript assets
