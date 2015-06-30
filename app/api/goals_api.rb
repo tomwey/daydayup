@@ -226,6 +226,7 @@ module API
         user = authenticate!
         
         if user.cheer(goal)
+          Message.create!(actor_id: user.id, user_id: goal.user, body: goa.id)
           { code: 0, message: "ok" }
         else
           { code: 2005, message: "加油失败" }

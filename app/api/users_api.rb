@@ -115,6 +115,7 @@ module API
         user = authenticate!
         
         if user.follow(User.find_by(id: params[:user_id]))
+          Message.create!(actor_id: user.id, user_id: params[:user_id], body:"关注了我")
           { code: 0, message: "ok" }
         else
           { code: 1011, message: "关注失败" }
