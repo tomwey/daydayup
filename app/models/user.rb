@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
   end
   
   def self.goal_geek
-    user_ids = Goal.select('user_id, count(*) as count').where('expired_at <= ?', Time.now).group('user_id').order('count desc').map(&:user_id)
+    user_ids = Goal.select('user_id, count(*) as count').no_abandon.where('expired_at <= ?', Time.now).group('user_id').order('count desc').map(&:user_id)
     where(id: user_ids)
   end
   
