@@ -44,6 +44,7 @@ module API
         
         if supervise.update_attribute(:accepted, true)
           supervise.user.change_supervises_count(1)
+          @goal.update_attribute(:supervisor_id, supervise.user.id)
           { code: 0, message: "ok" }
         else
           { code: 4005, message: "接受督促失败" }
@@ -93,6 +94,8 @@ module API
         
         # 减少目标督促数
         supervise.user.change_supervises_count(-1) if supervise.user
+        
+        @goal.update_attribute(:supervisor_id, nil)
         
         supervise.destroy
         
