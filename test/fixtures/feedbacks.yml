@@ -2,8 +2,16 @@
 
 one:
   body: MyText
-  user_id: 1
+  model: MyString
+  os: MyString
+  lang: MyString
+  version: MyString
+  uid: MyString
 
 two:
   body: MyText
-  user_id: 1
+  model: MyString
+  os: MyString
+  lang: MyString
+  version: MyString
+  uid: MyString

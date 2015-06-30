@@ -135,5 +135,26 @@ module API
       end
     end # end talks resource 
     
+    resource :feedbacks do
+      desc "意见反馈"
+      params do
+        requires :body, type: String, desc: "反馈内容"
+        requires :model, type: String, desc: "设备信息"
+        requires :os, type: String, desc: "设备操作系统版本"
+        requires :lang, type: String, desc: "设备语言"
+        requires :version, type: String, desc: "app当前版本"
+        requires :uid, type: String, desc: "用户设备id"
+      end
+      post :send do
+        Feedback.create!(body: params[:body],
+                         model: params[:model],
+                         os: params[:os],
+                         lang: params[:lang],
+                         version: params[:version],
+                         uid: params[:uid])
+        { code: 0, message: "ok" }
+      end # end send
+    end # end feedbacks resource
+    
   end
 end
