@@ -76,7 +76,7 @@ module API
         if user.unlike(Note.find_by(id: params[:note_id]))
           { code: 0, message: "ok" }
         else
-          { code: 3002, message: "取消点赞失败" }
+          { code: 3003, message: "取消点赞失败" }
         end
       end # end cancel like
       

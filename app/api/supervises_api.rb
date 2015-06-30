@@ -16,7 +16,7 @@ module API
         goal = Goal.find(params[:goal_id])
         
         if user == goal.user
-          return { code: 4001, message: "自己不能督促自己的目标" }
+          return { code: 4003, message: "自己不能督促自己的目标" }
         end
         
         Supervise.create!(user_id: user.id, goal_id: goal.id)
@@ -39,14 +39,14 @@ module API
         supervise = Supervise.where(id: params[:id], goal_id: @goal.id, accepted: false).first
         
         if supervise.blank?
-          return { code: 4002, message: "要同意的督促不存在" }
+          return { code: 4004, message: "要接受的督促不存在" }
         end
         
         if supervise.update_attribute(:accepted, true)
           supervise.user.change_supervises_count(1)
           { code: 0, message: "ok" }
         else
-          { code: 4002, message: "接受督促失败" }
+          { code: 4005, message: "接受督促失败" }
         end
         
       end # end accept
@@ -65,7 +65,7 @@ module API
         supervise = Supervise.where(id: params[:id], goal_id: @goal.id, accepted: false).first
         
         if supervise.blank?
-          return { code: 4002, message: "要拒绝的督促不存在" }
+          return { code: 4006, message: "要拒绝的督促不存在" }
         end
         
         supervise.destroy
@@ -88,7 +88,7 @@ module API
         # 只有同意督促后，目标才有督促人，才可以更换督促人
         supervise = Supervise.where(goal_id: @goal.id, accepted: true).first
         if supervise.blank?
-          return { code: 4002, message: "要更换的督促不存在" }
+          return { code: 4007, message: "要更换的督促不存在" }
         end
         
         # 减少目标督促数

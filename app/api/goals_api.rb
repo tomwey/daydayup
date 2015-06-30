@@ -83,7 +83,7 @@ module API
       get '/:filter' do
         @type = Category.find_by(id: params[:type_id])
         if @type.blank?
-          return { code: -100, message: "没有找到该类别" }
+          return { code: 4001, message: "没有找到该类别" }
         end
         
         @goals = Goal.send(params[:filter].to_sym)
@@ -170,13 +170,13 @@ module API
         end
         
         if user.following_goal?(@goal)
-          return { code: 2001, message: "您已经关注了该目标，不能多次关注" }
+          return { code: 2002, message: "您已经关注了该目标，不能多次关注" }
         end
         
         if user.follow_goal(@goal)
           { code: 0, message: "ok" }
         else
-          { code: 2001, message: "关注目标失败" }
+          { code: 2003, message: "关注目标失败" }
         end
         
       end # end 关注目标
@@ -194,7 +194,7 @@ module API
         if user.unfollow_goal(@goal)
           { code: 0, message: "ok" }
         else
-          { code: 2002, message: "取消关注目标失败" }
+          { code: 2004, message: "取消关注目标失败" }
         end
         
       end # end 取消关注目标
@@ -228,7 +228,7 @@ module API
         if user.cheer(goal)
           { code: 0, message: "ok" }
         else
-          { code: 2004, message: "加油失败" }
+          { code: 2005, message: "加油失败" }
         end
         
       end # end cheer
@@ -244,7 +244,7 @@ module API
         if user.uncheer(goal)
           { code: 0, message: "ok" }
         else
-          { code: 2004, message: "取消加油失败" }
+          { code: 2006, message: "取消加油失败" }
         end
         
       end # end uncheer
@@ -262,7 +262,7 @@ module API
         if @goal.update_attribute(:is_abandon, true)
           { code: 0, message: "ok" }
         else
-          { code: 2005, message: "放弃目标失败" }
+          { code: 2007, message: "放弃目标失败" }
         end
       end # end abandon
       
@@ -279,7 +279,7 @@ module API
         if @goal.update_attribute(:visible, false)
           { code: 0, message: "ok" }
         else
-          { code: 2006, message: "删除目标失败" }
+          { code: 2008, message: "删除目标失败" }
         end
       end # end delete
       
