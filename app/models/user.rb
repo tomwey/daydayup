@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
             
   mount_uploader :avatar, AvatarUploader
   
-  scope :goal_geek, -> {  }
+  # scope :goal_geek, -> {  }
   scope :supervise_geek, -> { order('supervises_count desc') }
   scope :popular_geek, -> { order('followers_count desc') }
   
@@ -31,6 +31,11 @@ class User < ActiveRecord::Base
   def generate_private_token
     random_key = "#{SecureRandom.hex(10)}"
     self.update_attribute(:private_token, random_key)
+  end
+  
+  def self.goal_geek
+    user_ids = Goal.select('user_id, count(*) as count').where('expired_at <= ?', Time.now).group('user_id').order('count desc').map(&:user_id)
+    where(id: user_ids)
   end
   
   def as_json(opts = {})
