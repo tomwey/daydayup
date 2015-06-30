@@ -3,22 +3,7 @@
 module API
   class MessagesAPI < Grape::API
     
-    resource :messages do
-      # 发送消息
-      desc "发送聊天信息"
-      params do
-        requires :token, type: String, desc: "Token"
-        requires :content, type: String, desc: "聊天内容"
-        requires :receiver_id, type: Integer, desc: "接收消息者id"
-      end
-      post :send do
-        sender = authenticate!
-        
-        m = Talk.create!(sender_id: sender.id, receiver_id: params[:receiver_id], content: params[:content])
-        
-        { code: 0, message: "ok", data: m }
-      end # end send
-      
+    resource :messages do      
       # 获取未读消息
       desc "获取未读消息条数"
       params do
@@ -113,21 +98,42 @@ module API
         { code: 0, message: "ok", data: @messages }
       end # end read
       
+    end # end resource
+    
+    resource :talks do
+      # 发送消息
+      desc "发送聊天信息"
+      params do
+        requires :token, type: String, desc: "Token"
+        requires :content, type: String, desc: "聊天内容"
+        requires :receiver_id, type: Integer, desc: "接收消息者id"
+      end
+      post :send do
+        sender = authenticate!
+        
+        m = Talk.create!(sender_id: sender.id, receiver_id: params[:receiver_id], content: params[:content])
+        
+        { code: 0, message: "ok", data: m }
+      end # end send
+      
       # 获取某个用户聊天记录
       desc "获取某个用户发出的聊天记录"
       params do
         requires :token, type: String, desc: "Token"
         requires :sender_id, type: Integer, desc: "发送消息者id"
       end
-      get :fetch do
+      get :read do
         user = authenticate!
         
-        @talks = Talk.where('sender_id = ? and receiver_id = ?', params[:sender_id], user.id)
+        @talks = Talk.where('(sender_id = :user_id_1 and receiver_id = :user_id_2) or (sender_id = :user_id_2 and receiver_id = :user_id_1)', user_id_1: params[:sender_id], user_id_2: user.id)
+        .order('id ASC')
+        
+        # 标记为已读
+        Talk.where(receiver_id: user.id).update_all(read: true)
         
         { code: 0, message: "ok", data: @talks }
       end
-      
-    end # end resource 
+    end # end talks resource 
     
   end
 end

@@ -14,8 +14,9 @@ class Message < ActiveRecord::Base
       id: self.id,
       type: self.message_type,
       content: self.content,
+      sender: self.actor || {},
+      receiver: self.user || {},
       send_time: self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-      actor: self.actor || {},
     }
   end
   
