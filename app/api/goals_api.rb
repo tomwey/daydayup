@@ -5,6 +5,40 @@ module API
     
     resource :goals do
       
+      # 创建目标
+      desc "创建目标"
+      params do
+        requires :token, type: String, desc: "认证Token"
+        requires :title, type: String, desc: "目标标题"
+        requires :expired_at, type: String, desc: "到期时间"
+        requires :is_supervise, type: Integer, desc: "整数，0或1，0表示false, 1表示true"
+        optional :body, type: String, desc: "具体目标计划"
+        requires :type_id, type: Integer, desc: "类别id"
+      end
+      post :create do
+        user = authenticate!
+        
+        type = Category.find_by(id: params[:type_id])
+        if type.blank?
+          return { code: 4001, message: "所属类别不存在" }
+        end
+        
+        is_supervise = params[:is_supervise].to_i == 0 ? false : true
+        
+        g = Goal.new(user_id: user.id, 
+                     title: params[:title], 
+                     expired_at: params[:expired_at], 
+                     is_supervise: is_supervise,
+                     body: params[:body],
+                     type_id: type.id)
+      
+        if g.save
+          { code: 0, message: "ok", data: g }
+        else
+          { code: 4002, message: g.errors.full_messages.join(',') }
+        end
+      end # end create
+      
       # 获取附近的目标
       desc "获取附近的目标"
       params do
