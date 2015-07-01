@@ -30,7 +30,7 @@ module API
                      expired_at: params[:expired_at], 
                      is_supervise: is_supervise,
                      body: params[:body],
-                     type_id: type.id)
+                     category_id: type.id)
       
         if g.save
           { code: 0, message: "ok", data: g }
