@@ -25,12 +25,14 @@ module API
         
         is_supervise = params[:is_supervise].to_i == 0 ? false : true
         
-        g = Goal.new(user_id: user.id, 
+        g = Goal.new(
                      title: params[:title], 
                      expired_at: params[:expired_at], 
                      is_supervise: is_supervise,
                      body: params[:body],
                      category_id: type.id)
+        
+        g.user_id = user.id
       
         if g.save
           { code: 0, message: "ok", data: g }
