@@ -37,12 +37,24 @@ module API
     
     # 发送短信工具方法
     def send_sms(mobile, text, error_msg)
-      RestClient.post('http://yunpian.com/v1/sms/send.json', "apikey=7612167dc8177b2f66095f7bf1bca49d&mobile=#{mobile}&text=#{text}") { |response, request, result, &block|
+      RestClient.post('http://yunpian.com/v1/sms/send.json', "apikey=7612167dc8177b2f66095f7bf1bddddca49d&mobile=#{mobile}&text=#{text}") { |response, request, result, &block|
         resp = JSON.parse(response)
         if resp['code'] == 0
           { code: 0, message: "ok" }
         else
           { code: -1, message: resp['msg'] }
+        end
+      }
+    end
+    
+    # 校对验证码
+    def check_code(mobile, code)
+      RestClient.post('http://api.zouqi.mobi:8080/sms', { 'method' => "checkCodeInfo", 'params' => { 'accesskey' => 'E2573699FD6A9D2ABEFD41AF27F617A05', 'mobile' => "#{mobile}", 'code' => "#{code}" } }.to_json, 'content-type' => :json) { |response, request, result, &block|
+        resp = JSON.parse(response)
+        if resp['code'] == 0 and resp['data']['success'].to_s == 'true'
+          { code: 0, message: "ok" }
+        else
+          { code: -1, message: resp['data']['msg'] }
         end
       }
     end

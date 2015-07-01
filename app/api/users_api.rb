@@ -20,10 +20,11 @@ module API
         end
         
         # 检查验证码是否有效
-        ac = AuthCode.where('mobile = ? and code = ? and verified = ?', params[:mobile], params[:code], true).first
-        if ac.blank?
-          return { code: 1004, message: "验证码无效" }
-        end
+        # ac = AuthCode.where('mobile = ? and code = ? and verified = ?', params[:mobile], params[:code], true).first
+        # if ac.blank?
+        #   return { code: 1004, message: "验证码无效" }
+        # end
+        return check_code(params[:mobile], params[:code])
         
         # 快捷登录
         user = User.find_by(mobile: params[:mobile])

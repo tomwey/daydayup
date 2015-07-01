@@ -35,7 +35,7 @@ module API
     
     helpers APIHelpers
     
-    mount API::AuthCodesAPI
+    # mount API::AuthCodesAPI
     mount API::UsersAPI
     mount API::CategoriesAPI
     mount API::BannersAPI
