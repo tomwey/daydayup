@@ -31,7 +31,7 @@ module API
         # end
         params.each do |key, value|
           if key.to_s ~= /photo\d+/
-            p = Photo.create!(image: param[key])
+            p = Photo.create!(image: value)
             @note.photos << p
           end
         end
