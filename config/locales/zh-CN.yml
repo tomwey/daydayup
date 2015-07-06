@@ -2,24 +2,16 @@
   activerecord:
     models:
       user: "用户"
-      item: "条目"
-      order: "订单"
+      admin: "管理员"
     attributes:
       user:
         mobile: "手机"
         nickname: "昵称"
         avatar: "头像"
         signature: "百家饭口号"
-      item:
-        title: "标题"
-        note: "简介"
-        price: "价格"
-        expired_at: "截止时间"
-        quantity: "数量"
-        address: "服务地址"
-        coordinates: "位置坐标"
-        image: "图片"
-        service_modes: "服务方式"
+      admin:
+        email: "标题"
+        password: "简介"
       order:
         user_id: "下单人"
         item_id: "条目"
@@ -32,6 +24,7 @@
     errors:
       models:
         user: "用户"
+        admin: "管理员"
       messages:
         inclusion: "不包含于列表中"
         exclusion: "是保留关键字"

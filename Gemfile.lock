@@ -38,6 +38,7 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
+    bcrypt (3.1.10)
     bootstrap-sass (3.2.0.2)
       sass (~> 3.2)
     bootstrap_helper (4.2.3)
@@ -75,6 +76,13 @@ GEM
     colorize (0.7.3)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
+    devise (3.5.1)
+      bcrypt (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 3.2.6, < 5)
+      responders
+      thread_safe (~> 0.1)
+      warden (~> 1.2.3)
     equalizer (0.0.9)
     erubis (2.7.0)
     execjs (2.5.2)
@@ -120,6 +128,7 @@ GEM
       grape
       newrelic_rpm
     newrelic_rpm (3.12.0.288)
+    orm_adapter (0.5.0)
     pg (0.18.1)
     quiet_assets (1.0.3)
       railties (>= 3.1, < 5.0)
@@ -152,6 +161,8 @@ GEM
     rake (10.4.2)
     rdoc (4.2.0)
       json (~> 1.4)
+    responders (1.1.2)
+      railties (>= 3.2, < 4.2)
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
@@ -206,6 +217,8 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0.3)
       equalizer (~> 0.0.9)
+    warden (1.2.3)
+      rack (>= 1.0)
     will_paginate (3.0.7)
     will_paginate-bootstrap (1.0.1)
       will_paginate (>= 3.0.3)
@@ -223,6 +236,7 @@ DEPENDENCIES
   capistrano-rbenv (~> 2.0)
   carrierwave (~> 0.10.0)
   coffee-rails (~> 4.0.0)
+  devise
   grape
   grape-entity
   jbuilder (~> 2.0)

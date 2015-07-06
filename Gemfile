@@ -20,6 +20,9 @@ gem 'will_paginate'
 gem 'will_paginate-bootstrap'
 gem 'bootstrap_helper', '4.2.3'
 
+# 后台登陆
+gem 'devise'
+
 # YAML 配置信息
 gem 'settingslogic', '~> 2.0.9'
 
