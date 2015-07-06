@@ -53,8 +53,31 @@ module API
       # 排行榜
       # goal_geek, supervise_geek, popular_geek
       desc "达人排名"
+      params do
+        optional :gender, type: Integer, desc: "性别，1为男，2为女"
+        optional :type_id, type: Integer, desc: "类别id"
+      end
       get '/:filter' do
-        @users = User.send(params[:filter].to_sym).order('id DESC').paginate(page: params[:page], per_page: page_size)
+        if params[:type_id]
+          @type = Category.find_by(id: params[:type_id])
+          if @type.blank?
+            return { code: 4001, message: "该类别不存在" }
+          end
+        end
+        
+        @users = User.send(params[:filter].to_sym).order('id DESC')
+        
+        @type = Category.find_by(id: params[:type_id])
+        if @type and @type.name != '全部'
+          @users = @users.joins(:goals).where('goals.category_id = ?', @type.id)
+        end
+        
+        if params[:gender]
+          @users = @users.where(gender: params[:gender])
+        end
+        
+        @users = @users.paginate(page: params[:page], per_page: page_size)
+        
         { code: 0, message: "ok", data: @users }
       end
       
