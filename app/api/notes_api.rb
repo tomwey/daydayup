@@ -29,6 +29,8 @@ module API
         #     @note.photos << p
         #   end
         # end
+        puts params
+        
         params.each do |key, value|
           if key.to_s =~ /photo\d+/
             p = Photo.create!(image: value)
