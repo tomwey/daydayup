@@ -23,10 +23,11 @@ module API
         @note.goal_id = @goal.id
         @note.body = params[:body]
         
-        puts params[:photos]
-        params[:photos].each do |param|
-          p = Photo.create!(image: param[:image])
-          @note.photos << p
+        if params[:photos]
+          params[:photos].each do |param|
+            p = Photo.create!(image: param[:image])
+            @note.photos << p
+          end
         end
         
         if @note.save
