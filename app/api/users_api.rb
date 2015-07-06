@@ -24,18 +24,22 @@ module API
         # if ac.blank?
         #   return { code: 1004, message: "验证码无效" }
         # end
-        return check_code(params[:mobile], params[:code])
+        
+        result = check_code(params[:mobile], params[:code])
+        if result['code'].to_i == -1
+          return result
+        end
         
         # 快捷登录
         user = User.find_by(mobile: params[:mobile])
         if user.present?
-          ac.update_attribute('verified', false)
+          # ac.update_attribute('verified', false)
           return { code: 0, message: "ok", data: user }
         end
         
         user = User.new(mobile: params[:mobile])
         if user.save
-          ac.update_attribute('verified', false)
+          # ac.update_attribute('verified', false)
           { code: 0, message: "ok", data: user }
         else
           { code: 1005, message: "用户登录失败" }
