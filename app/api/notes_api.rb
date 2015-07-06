@@ -10,9 +10,9 @@ module API
         requires :token, type: String, desc: "Token"
         requires :goal_id, type: Integer, desc: "目标id"
         requires :body, type: String, desc: "记录内容"
-        optional :photos, type: Array do
-          requires :image, desc: "图片数据"
-        end
+        # optional :photos, type: Array do
+        #   requires :image, desc: "图片数据"
+        # end
       end
       post :create do
         authenticate!
@@ -29,7 +29,7 @@ module API
         #     @note.photos << p
         #   end
         # end
-        puts params
+        # puts params
         
         params.each do |key, value|
           if key.to_s =~ /photo\d+/
