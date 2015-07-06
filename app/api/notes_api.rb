@@ -23,9 +23,15 @@ module API
         @note.goal_id = @goal.id
         @note.body = params[:body]
         
-        if params[:photos]
-          params[:photos].each do |param|
-            p = Photo.create!(image: param[:image])
+        # if params[:photos]
+        #   params[:photos].each do |param|
+        #     p = Photo.create!(image: param[:image])
+        #     @note.photos << p
+        #   end
+        # end
+        params.each do |key, value|
+          if key.to_s ~= /photo\d+/
+            p = Photo.create!(image: param[key])
             @note.photos << p
           end
         end
@@ -59,7 +65,12 @@ module API
       post '/:note_id/like' do
         user = authenticate!
         
-        if user.like(Note.find_by(id: params[:note_id]))
+        note = Note.find_by(id: params[:note_id])
+        if note.blank?
+          return { code: 4001, message: "需要点赞的记录不存在" }
+        end
+        
+        if user.like(note)
           { code: 0, message: "ok" }
         else
           { code: 3002, message: "点赞失败" }
