@@ -23,7 +23,7 @@ gem 'bootstrap_helper', '4.2.3'
 # 后台登陆
 gem 'devise'
 
-gem 'wysihtml5n-rails'
+gem 'redactor-rails'
 
 # YAML 配置信息
 gem 'settingslogic', '~> 2.0.9'

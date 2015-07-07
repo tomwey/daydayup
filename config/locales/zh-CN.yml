@@ -4,6 +4,7 @@
       user: "用户"
       admin: "管理员"
       category: "类别"
+      banner: "广告"
     attributes:
       user:
         mobile: "手机"
@@ -18,6 +19,11 @@
       category:
         name: "类别名"
         sort: "显示顺序"
+      banner:
+        image: "广告图片"
+        title: "标题"
+        body: "内容"
+        category_id: "所属类别"
         
     errors:
       models:

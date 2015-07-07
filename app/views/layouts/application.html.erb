@@ -28,7 +28,7 @@
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li><a href="/">首页</a></li>
-              <li><%= link_to "广告", goals_path %></li>
+              <li><%= link_to "广告", banners_path %></li>
               <li><%= link_to "用户", users_path %></li>
               <li><%= link_to "类别", categories_path %></li>
               <li><%= link_to "目标", goals_path %></li>
@@ -55,5 +55,6 @@
       <%= yield %>
     </div>
 
+<%= yield :scripts %>
 </body>
 </html>

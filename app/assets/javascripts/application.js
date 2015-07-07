@@ -14,8 +14,6 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require bootstrap
-//= require wysihtml5n
+//= require redactor-rails
+//= require redactor-rails/langs/zh_cn
 //= require_tree .
-
-
-  $('.wysiwyg').wysiHTML5N();
