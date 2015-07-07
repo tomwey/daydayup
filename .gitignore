@@ -28,6 +28,7 @@ config/mailman.yml
 config/mailer_daemon.yml
 config/newrelic.yml
 public/uploads/**/*
+public/system/**/*
 public/photo/
 public/topics
 public/user
