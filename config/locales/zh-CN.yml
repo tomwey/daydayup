@@ -9,21 +9,15 @@
         mobile: "手机"
         nickname: "昵称"
         avatar: "头像"
-        signature: "百家饭口号"
+        signature: "个性签名"
       admin:
-        email: "标题"
-        password: "简介"
+        email: "邮箱"
+        password: "密码"
+        current_password: "旧密码"
+        password_confirmation: "确认密码"
       category:
         name: "类别名"
         sort: "显示顺序"
-      order:
-        user_id: "下单人"
-        item_id: "条目"
-        service_modes: "服务方式"
-        address: "服务地址"
-        state: "订单状态"
-        quantity: "订单份数"
-        fee: "订单总价"
         
     errors:
       models:
