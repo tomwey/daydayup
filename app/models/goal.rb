@@ -45,6 +45,10 @@ class Goal < ActiveRecord::Base
     # !!supervise
   end
   
+  def supervisor_name
+    User.find_by(id: self.supervisor_id).try(:nickname) || '-'
+  end
+  
   def latitude
     if location
       location.y || ""

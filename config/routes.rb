@@ -11,6 +11,13 @@ Rails.application.routes.draw do
     patch 'admins/:id'  => 'devise/registrations#update', as: :admin_registration
   end
   
+  resources :users, only: [:index] do
+    patch :block, on: :member
+    patch :unblock, on: :member
+  end
+  
+  resources :goals
+  resources :categories
   resources :banner, only: [:show]
   
   mount API::APIV1 => '/'
