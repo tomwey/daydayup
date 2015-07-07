@@ -14,4 +14,8 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require bootstrap
+//= require wysihtml5n
 //= require_tree .
+
+
+  $('.wysiwyg').wysiHTML5N();

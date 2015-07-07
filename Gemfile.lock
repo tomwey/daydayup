@@ -222,6 +222,8 @@ GEM
     will_paginate (3.0.7)
     will_paginate-bootstrap (1.0.1)
       will_paginate (>= 3.0.3)
+    wysihtml5n-rails (0.0.4)
+      sass-rails (>= 3.1)
 
 PLATFORMS
   ruby
@@ -262,3 +264,4 @@ DEPENDENCIES
   unicorn-worker-killer
   will_paginate
   will_paginate-bootstrap
+  wysihtml5n-rails
