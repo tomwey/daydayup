@@ -31,7 +31,7 @@
         <td><%= goal.cheers_count %></td>
         <td><%= goal.supervisor_name %></td>
         <td>
-          <%= link_to "删除", goal_path(goal), method: :delete, confirm: { data: '您确定吗？' }, class: "btn btn-danger btn-xs" %>
+          <%= link_to "删除", goal_path(goal), method: :delete, data: { confirm: '您确定吗？' }, class: "btn btn-danger btn-xs" %>
         </td>
       </tr>
     <% end %>

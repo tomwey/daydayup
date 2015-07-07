@@ -18,7 +18,10 @@ Rails.application.routes.draw do
   
   resources :goals
   resources :categories
+  resources :comments, only: [:index, :destroy]
   resources :banner, only: [:show]
+  resources :feedbacks, only: [:index]
+  resources :messages, only: [:index, :new, :create]
   
   mount API::APIV1 => '/'
   

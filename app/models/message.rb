@@ -5,6 +5,8 @@ class Message < ActiveRecord::Base
   
   scope :unread, -> { where(read: false) }
   
+  validates_presence_of :body
+  
   after_create do
     PushService.publish(self)
   end
