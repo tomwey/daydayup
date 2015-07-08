@@ -106,6 +106,36 @@ module API
         
       end # end /:filter
       
+      # 获取目标记录列表
+      desc "获取目标记录列表"
+      params do
+        requires :type_id, type: Integer, desc: "类别ID"
+        optional :token, type: String, desc: "认证Token"
+      end
+      get '/:filter/notes' do
+        @type = Category.find_by(id: params[:type_id])
+        if @type.blank?
+          return { code: 4001, message: "没有找到该类别" }
+        end
+        
+        @notes = Note.joins(:goal).where('goals.visible = ? and goals.is_abandon = ?', true, false).send(params[:filter].to_sym)
+        if @type.name != '全部'
+          @notes = @notes.where('goals.category_id = ?', @type.id)
+        end
+        
+        @notes = @notes.paginate(page: params[:page], per_page: page_size).all
+        
+        user = User.find_by(private_token: params[:token])
+        if user.present?
+          @notes.each do |note| 
+            note.blike = user.liked?(note)
+          end
+        end
+        
+        { code: 0, message: 'ok', data: @notes }
+        
+      end # end /:filter
+      
       # 获取目标详情
       desc "获取目标详情"
       params do 

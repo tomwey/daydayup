@@ -96,6 +96,13 @@ class User < ActiveRecord::Base
     user.update_attribute(:followers_count, user.followers_count - 1) if (user.followers_count - 1) >= 0
   end
   
+  # 是否赞过
+  def liked?(note)
+    return false if note.blank?
+    
+    Like.find_by(user_id: self.id, note_id: note.id).present?
+  end
+  
   # 点赞记录
   def like(note)
     return false if note.blank?
