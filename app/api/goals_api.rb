@@ -183,6 +183,15 @@ module API
         @goal = Goal.find(params[:goal_id])
         @note = @goal.notes.find_by(id: params[:note_id])
         
+        user = User.find_by(private_token: params[:token])
+        if user.present?
+          @note.blike = user.liked?(@note)
+          owner = @note.goal.user
+          owner.is_followed = user.following?(owner)
+        else
+          @note.blike = false
+        end
+        
         render_json(@note, API::Entities::NoteDetail)
         
       end # end 获取记录详情

@@ -13,6 +13,14 @@ module API
       expose :avatar do |model, opts|
         model.avatar_url
       end
+      expose :level do |model, opts|
+        model.calcu_level
+      end
+      expose :signature, format_with: :null
+      expose :constellation, format_with: :null
+      expose :is_followed do |model, opts|
+        model.is_followed || false
+      end
     end
     
     class Category < BaseEntity
@@ -71,7 +79,9 @@ module API
     end
         
     class PhotoDetail < BaseEntity
-      
+      expose :image do |model, opts|
+        model.image_url
+      end
     end
     
     class Goal < BaseEntity
@@ -91,6 +101,9 @@ module API
       expose :photos, using: API::Entities::PhotoDetail
       expose :created_at, as: :published_at, format_with: :chinese_datetime
       expose :likes_count, :comments_count
+      expose :blike do |model, opts|
+        model.blike || false
+      end
       expose :comments, using: API::Entities::Comment
     end
 
