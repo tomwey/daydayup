@@ -46,6 +46,14 @@ module API
         
       end # end create
       
+      # 获取评论
+      desc "获取某条记录下的所有评论"
+      get '/:note_id/comments' do
+        @comments = Comment.where('note_id = ?', params[:note_id]).order('id DESC')
+        
+        render_json(@comments, API::Entities::CommentDetail)
+      end
+      
       # 评论记录
       desc "评论记录"
       params do
@@ -95,6 +103,34 @@ module API
       end # end cancel like
       
     end # end resource 
+    
+    resource :comments do
+      # 对评论进行回复
+      desc "对评论进行回复"
+      params do
+        requires :token, type: String, desc: "Token"
+        requires :note_id, type: Integer, desc: "记录id"
+        requires :body, type: String, desc: "回复内容"
+      end
+      post '/:comment_id/reply' do
+        user = authenticate!
+        
+        @note = Note.find_by(id: params[:note_id])
+        if @note.blank?
+          return { code: 4001, message: "记录不存在" }
+        end
+        
+        @comment = @note.comments.find_by(id: params[:comment_id])
+        if @comment.blank? 
+          return { code: 4001, message: "该评论不存在" }
+        end
+        
+        @reply = Reply.create!(body: params[:body], comment_id: @comment.id, user_id: user.id)
+        
+        { code: 0, message: "ok", data: @reply }
+        
+      end
+    end # end comments resource
     
   end
 end

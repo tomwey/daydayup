@@ -31,7 +31,7 @@ module API
     class Note < BaseEntity
       expose :body, format_with: :null
     end
-    
+        
     # class Supervise < BaseEntity
     #   expose :user, as: :supervisor, using: API::Entities::User
     # end
@@ -95,6 +95,20 @@ module API
       expose :user, as: :commenter, using: API::Entities::User
     end
     
+    class Reply < BaseEntity
+      expose :body, format_with: :null
+      expose :user, as: :replyer, using: API::Entities::User
+      expose :comment, using: API::Entities::Comment
+      expose :created_at, as: :replied_at, format_with: :chinese_datetime
+    end
+    
+    class CommentDetail < BaseEntity
+      expose :body, format_with: :null
+      expose :created_at, as: :commented_at, format_with: :chinese_datetime
+      expose :user, as: :commenter, using: API::Entities::User
+      expose :replies, using: API::Entities::Reply
+    end
+    
     class NoteDetail < BaseEntity
       expose :goal, using: API::Entities::Goal
       expose :body, format_with: :null
@@ -104,7 +118,7 @@ module API
       expose :blike do |model, opts|
         model.blike || false
       end
-      expose :comments, using: API::Entities::Comment
+      expose :comments, using: API::Entities::CommentDetail
     end
 
     class GoalNoteDetail < BaseEntity
