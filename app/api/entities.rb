@@ -54,6 +54,12 @@ module API
     class UserDetail < BaseEntity
       expose :mobile, format_with: :null
       expose :nickname, format_with: :null
+      expose :avatar do |model, opts|
+        model.avatar_url
+      end
+      expose :level do |model, opts|
+        model.calcu_level
+      end
       expose :signature, format_with: :null
       expose :gender, format_with: :null
       expose :constellation, format_with: :null
