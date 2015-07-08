@@ -26,7 +26,7 @@
           <%= state_link_to state: user.verified,
                             yes_uri: "/users/#{user.id}/block", 
                             yes_text: "禁用",
-                            no_uri: "/cpanel/users/#{user.id}/unblock",
+                            no_uri: "/users/#{user.id}/unblock",
                             no_text: "启用" %>
         </td>
       </tr>
