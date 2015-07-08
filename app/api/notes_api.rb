@@ -111,8 +111,9 @@ module API
         requires :token, type: String, desc: "Token"
         requires :note_id, type: Integer, desc: "记录id"
         requires :body, type: String, desc: "回复内容"
+        requires :comment_id, type: Integer, desc: "评论id"
       end
-      post '/:comment_id/reply' do
+      post :reply do
         user = authenticate!
         
         @note = Note.find_by(id: params[:note_id])
