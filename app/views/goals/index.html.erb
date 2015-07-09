@@ -1,41 +1,57 @@
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>标题</th>
-      <th>具体计划</th>
-      <th>完成日期</th>
-      <th>所属类别</th>
-      <th>所有者</th>
-      <th>是否需要督促</th>
-      <th>是否放弃</th>
-      <th>被关注次数</th>
-      <th>被加油次数</th>
-      <th>督促者</th>
-      <th>操作</th>
-    </tr>
-  </thead>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="row">
+      <div class="col-sm-3">
+        <h5>用户列表</h5>
+      </div>
+      <div class="col-sm-9">
+        <%= form_tag search_goals_path, method: 'GET', class: "form-inline search-form", role: "form" do %>
+          <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "输入目标名称或用户昵称或用户手机号" %>
+          <%= submit_tag '搜索', class: "btn btn-primary btn-sm" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>标题</th>
+          <th>具体计划</th>
+          <th>完成日期</th>
+          <th>所属类别</th>
+          <th>所有者</th>
+          <th>是否需要督促</th>
+          <th>是否放弃</th>
+          <th>被关注次数</th>
+          <th>被加油次数</th>
+          <th>督促者</th>
+          <th>操作</th>
+        </tr>
+      </thead>
 
-  <tbody>
-    <% @goals.each do |goal| %>
-      <tr>
-        <td><%= link_to goal.id, goal %></td>
-        <td><%= goal.title %></td>
-        <td><%= goal.body %></td>
-        <td><%= goal.expired_at.strftime('%Y-%m-%d %H:%M:%S') if goal.expired_at %></td>
-        <td><%= goal.category.try(:name) || '-' %></td>
-        <td><%= goal.user.try(:nickname) || '-' %></td>
-        <td><%= goal.is_supervise ? '是' : '否' %></td>
-        <td><%= goal.is_abandon ? '是' : '否' %></td>
-        <td><%= goal.follows_count %></td>
-        <td><%= goal.cheers_count %></td>
-        <td><%= goal.supervisor_name %></td>
-        <td>
-          <%= link_to "删除", goal_path(goal), method: :delete, data: { confirm: '您确定吗？' }, class: "btn btn-danger btn-xs" %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
+      <tbody>
+        <% @goals.each do |goal| %>
+          <tr>
+            <td><%= link_to goal.id, goal %></td>
+            <td><%= goal.title %></td>
+            <td><%= goal.body %></td>
+            <td><%= goal.expired_at.strftime('%Y-%m-%d %H:%M:%S') if goal.expired_at %></td>
+            <td><%= goal.category.try(:name) || '-' %></td>
+            <td><%= goal.user.try(:nickname) || '-' %></td>
+            <td><%= goal.is_supervise ? '是' : '否' %></td>
+            <td><%= goal.is_abandon ? '是' : '否' %></td>
+            <td><%= goal.follows_count %></td>
+            <td><%= goal.cheers_count %></td>
+            <td><%= goal.supervisor_name %></td>
+            <td>
+              <%= link_to "删除", goal_path(goal), method: :delete, data: { confirm: '您确定吗？' }, class: "btn btn-danger btn-xs" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
 <div style="text-align: center;"><%= will_paginate @goals, renderer: BootstrapPagination::Rails %></div>

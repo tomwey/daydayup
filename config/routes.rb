@@ -17,7 +17,9 @@ Rails.application.routes.draw do
     patch :unblock, on: :member
   end
   
-  resources :goals
+  resources :goals do
+    get :search, on: :collection
+  end
   resources :categories
   resources :comments, only: [:index, :destroy]
   # resources :banner, only: [:show]
