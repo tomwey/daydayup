@@ -1,31 +1,42 @@
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>反馈内容</th>
-      <th>设备</th>
-      <th>当前系统</th>
-      <th>app版本</th>
-      <th>语言</th>
-      <th>设备ID</th>
-      <th>At</th>
-    </tr>
-  </thead>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="row">
+      <div class="col-sm-3">
+        <h5>意见反馈列表</h5>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>反馈内容</th>
+          <th>设备</th>
+          <th>当前系统</th>
+          <th>app版本</th>
+          <th>语言</th>
+          <th>设备ID</th>
+          <th>At</th>
+        </tr>
+      </thead>
 
-  <tbody>
-    <% @feedbacks.each do |feedback| %>
-      <tr>
-        <td><%= feedback.id %></td>
-        <td><%= feedback.body %></td>
-        <td><%= feedback.model %></td>
-        <td><%= feedback.os %></td>
-        <td><%= feedback.version %></td>
-        <td><%= feedback.lang %></td>
-        <td><%= feedback.uid %></td>
-        <td><%= feedback.created_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+      <tbody>
+        <% @feedbacks.each do |feedback| %>
+          <tr>
+            <td><%= feedback.id %></td>
+            <td><%= feedback.body %></td>
+            <td><%= feedback.model %></td>
+            <td><%= feedback.os %></td>
+            <td><%= feedback.version %></td>
+            <td><%= feedback.lang %></td>
+            <td><%= feedback.uid %></td>
+            <td><%= feedback.created_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
 
 <div style="text-align: center;"><%= will_paginate @feedbacks, renderer: BootstrapPagination::Rails %></div>
