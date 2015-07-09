@@ -18,7 +18,7 @@ class Note < ActiveRecord::Base
       likes_count: self.likes_count,
       comments_count: self.comments_count,
       blike: self.blike || false,
-      goal_title: self.title || "",
+      goal_title: self.goal.title || "",
       type: self.goal.category || {},
       owner: self.goal.user || {},      
       published_at: self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
