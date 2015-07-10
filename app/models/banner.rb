@@ -10,8 +10,17 @@ class Banner < ActiveRecord::Base
     {
       id: self.id,
       title: self.title || "",
+      image_url: self.image_url,
       link: Setting.upload_url + "/banners/#{self.id}",
     }
+  end
+  
+  def image_url
+    if self.image
+      self.image.url(:large)
+    else
+      ""
+    end
   end
   
 end
