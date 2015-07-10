@@ -27,7 +27,7 @@ class Goal < ActiveRecord::Base
   def as_json(opts = {})
     {
       id: self.id,
-      title: self.title || "",
+      goal_title: self.title || "",
       note: self.recent_note || {},
       type: self.category || {},
       owner: self.user || {},
@@ -36,6 +36,7 @@ class Goal < ActiveRecord::Base
       is_followed: self.is_followed || false,
       latitude: latitude,
       longitude: longitude,
+      published_at: self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
     }
   end
   
