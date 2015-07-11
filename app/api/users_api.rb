@@ -65,18 +65,20 @@ module API
           end
         end
         
-        @users = User.send(params[:filter].to_sym).order('id DESC')
+        @users = User.send(params[:filter].to_sym)
         
         @type = Category.find_by(id: params[:type_id])
         if @type and @type.name != '全部'
-          @users = @users.joins(:goals).where('goals.category_id = ?', @type.id)
+          user_ids = Goal.select('user_id').where(category_id: @type.id).group(:user_id).map(&:user_id)
+          @users = @users.where(id: user_ids)
+          # @users = @users.joins(:goals).where('goals.category_id = ?', @type.id)
         end
         
         if params[:gender]
           @users = @users.where(gender: params[:gender])
         end
         
-        @users = @users.paginate(page: params[:page], per_page: page_size)
+        @users = @users.order('id DESC').paginate(page: params[:page], per_page: page_size)
         
         { code: 0, message: "ok", data: @users }
       end
