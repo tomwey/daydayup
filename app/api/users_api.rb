@@ -94,6 +94,69 @@ module API
     
     resource :user do
       
+      # 第三方登录绑定用户数据
+      desc "第三方登录绑定用户数据"
+      params do
+        requires :provider_id, type: String, desc: "第三方用户标示id"
+        optional :mobile, type: String, desc: "手机号"
+        optional :avatar, desc: "二进制图片数据"
+        optional :nickname, type: String, desc: "昵称"
+        optional :gender, type: Integer, desc: "性别，1表示男，2表示女"
+        optional :age, type: Integer, desc: "年龄"
+        optional :constellation, type: String, desc: "星座"
+        optional :signature, type: String, desc: "签名"
+      end
+      post :bind do
+        
+        user = User.find_by(provider_id: params[:provider_id])
+        if user.present?
+          return { code: 0, message: "ok", data: user }
+        end
+        
+        # 新建用户
+        user = User.new
+        
+        user.provider_id = params[:provider_id]
+        
+        if params[:mobile]
+          if not check_mobile(params[:mobile])
+            return { code: 1001, message: "不正确的手机号" }
+          end
+          
+          user.mobile = params[:mobile]
+        end
+        
+        if params[:avatar]
+          user.avatar = params[:avatar]
+        end
+        
+        if params[:nickname]
+          user.nickname = params[:nickname]
+        end
+        
+        if params[:age]
+          user.age = params[:age]
+        end
+        
+        if params[:gender]
+          user.gender = params[:gender]
+        end
+        
+        if params[:constellation]
+          user.constellation = params[:constellation]
+        end
+        
+        if params[:signature]
+          user.signature = params[:signature]
+        end
+        
+        if user.save(validate: false)
+          { code: 0, message: "ok", data: user }
+        else
+          { code: 1006, message: user.errors.full_messages.join(",") }
+        end
+      end # end bind
+      
       # 我的目标
       desc "我的目标"
       params do

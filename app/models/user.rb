@@ -19,7 +19,7 @@ class User < ActiveRecord::Base
   validates :mobile, format: { with: /\A1[3|4|5|8|7][0-9]\d{4,8}\z/, message: "请输入11位正确手机号" }, 
   length: { is: 11 }, :uniqueness => true
   
-  validates :nickname, uniqueness: true, allow_nil: true
+  # validates :nickname, uniqueness: true, allow_nil: true
             
   mount_uploader :avatar, AvatarUploader
   
@@ -48,6 +48,7 @@ class User < ActiveRecord::Base
       gender: self.gender || "",
       age: self.age || "",
       level: self.calcu_level,
+      provider_id: self.provider_id || "",
       signature: self.signature || "",
       constellation: self.constellation || "",
       followers_count: self.followers_count,
