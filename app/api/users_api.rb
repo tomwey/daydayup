@@ -241,6 +241,48 @@ module API
         
       end # end follow user
       
+      # 获取粉丝列表
+      desc "获取粉丝列表"
+      params do
+        requires :token, type: String, desc: "Token"
+      end
+      get :followers do
+        user = authenticate!
+        
+        @followers = []
+        @follower_ids = user.followers.order('id DESC').map(&:id)
+        @follower_ids.each do |id|
+          follower = User.find_by(id: id)
+          goal = Goal.no_deleted.where(user_id: id).order('id DESC').first
+          hash = follower.as_json
+          hash[:goal] = { id: goal.id, title: goal.title || "" }
+          @followers << hash
+        end
+        
+        { code: 0, message: "ok", data: @followers }
+      end # end get followers
+      
+      # 获取我关注的用户列表
+      desc "获取我关注的用户列表"
+      params do
+        requires :token, type: String, desc: "Token"
+      end
+      get :following_users do
+        user = authenticate!
+        
+        @followers = []
+        @follower_ids = user.following_users.order('id DESC').map(&:id)
+        @follower_ids.each do |id|
+          follower = User.find_by(id: id)
+          goal = Goal.no_deleted.where(user_id: id).order('id DESC').first
+          hash = follower.as_json
+          hash[:goal] = { id: goal.id, title: goal.title || "" }
+          @followers << hash
+        end
+        
+        { code: 0, message: "ok", data: @followers }
+      end # end get following_users
+      
       # # 赞某个用户的某一目标的某条记录
       # params do
       #   requires :token, type: String, desc: "Token, 必须"
