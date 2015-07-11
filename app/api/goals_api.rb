@@ -165,6 +165,8 @@ module API
             follows_count: @goal.follows_count,
             cheers_count: @goal.cheers_count,
             is_supervised: @goal.is_supervised?,
+            need_supervise: @goal.is_supervise,
+            supervisor: @goal.supervisor,
             is_cheered: @goal.is_cheered || false,
             is_followed: @goal.is_followed || false,
             notes: @goal.notes.includes(:photos).order('id desc') || [],
