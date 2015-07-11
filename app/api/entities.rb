@@ -106,7 +106,10 @@ module API
       expose :body, format_with: :null
       expose :created_at, as: :commented_at, format_with: :chinese_datetime
       expose :user, as: :commenter, using: API::Entities::User
-      expose :replies, using: API::Entities::Reply
+      # expose :replies, using: API::Entities::Reply
+      expose :at_who do |model, opts|
+        model.at_user
+      end
     end
     
     class NoteDetail < BaseEntity

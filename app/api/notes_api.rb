@@ -59,12 +59,24 @@ module API
       params do
         requires :token, type: String, desc: "Token"
         requires :body, type: String, desc: "评论的内容"
+        optional :at_who, type: Integer, desc: "被@的用户id"
       end
       post '/:note_id/comment' do
         user = authenticate!
         
-        Comment.create!(body: params[:body], user_id: user.id, note_id: params[:note_id])
-        { code: 0, message: "ok" }
+        comment = Comment.new(body: params[:body], user_id: user.id, note_id: params[:note_id])
+        
+        if params[:at_who]
+          comment.at_who = params[:at_who]
+        end
+        
+        # Comment.create!(body: params[:body], user_id: user.id, note_id: params[:note_id])
+        if comment.save
+          # { code: 0, message: "ok", data: comment }
+          render_json(comment, API::Entities::CommentDetail)
+        else
+          { code: 3110, message: "发表评论失败" }
+        end
       end # end comment
       
       # 赞记录
