@@ -41,7 +41,11 @@ module API
       expose :body, format_with: :null
       expose :expired_at, format_with: :chinese_datetime
       expose :category, as: :type, using: API::Entities::Category
-      expose :user, as: :owner, using: API::Entities::User
+      # expose :user, as: :owner, using: API::Entities::User
+      expose :is_abandon
+      expose :supervisor do |model, opts|
+        model.supervisor
+      end
     end
     
     class MyGoalDetail < BaseEntity
@@ -72,10 +76,16 @@ module API
       expose :gender, format_with: :null
       expose :constellation, format_with: :null
       expose :followers_count, :supervises_count
+      expose :is_followed
       expose :completed_goals_count do |model, opts|
         model.goals.where('expired_at <= ?', Time.now).count
       end
-      expose :goals, using: API::Entities::UserGoalDetail
+      expose :supervise_completed_goals_count do |model, opts|
+        model.goals.where('expired_at <= ? and supervisor_id is not null', Time.now).count
+      end
+      expose :goals, using: API::Entities::UserGoalDetail do |model, opts|
+        model.goals.no_deleted.order('id DESC')
+      end
     end
         
     class PhotoDetail < BaseEntity

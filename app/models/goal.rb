@@ -40,6 +40,15 @@ class Goal < ActiveRecord::Base
     }
   end
   
+  def supervisor
+    u = User.find_by(id: self.supervisor_id)
+    if u.blank?
+      {}
+    else
+      u.as_json
+    end
+  end
+  
   def is_supervised?
     self.supervisor_id.present?
     # supervise = Supervise.where(goal_id: self.id, accepted: true).first

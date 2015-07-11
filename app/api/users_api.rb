@@ -83,8 +83,18 @@ module API
       
       # 获取用户详情
       desc "获取用户详情"
+      params do
+        optional :token, type: String, desc: "Token"
+      end
       get '/show/:id' do
         @user = User.find_by(id: params[:id])
+        
+        if params[:token]
+          user = User.find_by(private_token: params[:token])
+          @user.is_followed = user.following?(@user)
+        else
+          @user.is_followed = false
+        end
         
         render_json(@user, API::Entities::UserDetail)
         
