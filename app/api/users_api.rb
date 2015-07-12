@@ -217,7 +217,14 @@ module API
       post '/friendships/create' do
         user = authenticate!
         
-        if user.follow(User.find_by(id: params[:user_id]))
+        uu = User.find_by(id: params[:user_id])
+        if not uu.blank?
+          if uu == user
+            return { code: 1022, message: "不能关注自己" }
+          end
+        end
+        
+        if user.follow(uu)
           Message.create!(actor_id: user.id, user_id: params[:user_id], body:"关注了我")
           { code: 0, message: "ok" }
         else
