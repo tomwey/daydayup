@@ -225,7 +225,7 @@ module API
         end
         
         if user.follow(uu)
-          Message.create!(actor_id: user.id, user_id: params[:user_id], body:"关注了我")
+          Message.create!(actor_id: user.id, user_id: params[:user_id], body:"关注了我", message_type: 4)
           { code: 0, message: "ok" }
         else
           { code: 1011, message: "关注失败" }
