@@ -19,6 +19,11 @@ module API
           return { code: 4003, message: "自己不能督促自己的目标" }
         end
         
+        supervise = Supervise.find_by(user_id: user.id, goal_id: goal.id)
+        if supervise.present?
+          return { code: 4010, message: "您已经督促过该目标，不能督促了" }
+        end
+        
         Supervise.create!(user_id: user.id, goal_id: goal.id)
         
         { code: 0, message: "ok" }
