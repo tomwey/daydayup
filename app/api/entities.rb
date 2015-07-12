@@ -54,8 +54,19 @@ module API
       expose :expired_at, format_with: :chinese_datetime
       expose :category, as: :type, using: API::Entities::Category
       expose :user, as: :owner, using: API::Entities::User
+      expose :state do |model, opts|
+        if model.supervise.blank? or !model.is_supervise
+          'normal'
+        else
+          if model.supervise.accepted
+            'accepted'
+          else
+            'new_request'
+          end
+        end
+      end
       expose :supervise, as: :supervisor do |model, opts|
-        if model.supervise.blank?
+        if model.supervise.blank? or !model.supervise.accepted
           {}
         else
           model.supervise.user.as_json
