@@ -185,6 +185,10 @@ module API
         @goal = Goal.find(params[:goal_id])
         @note = @goal.notes.find_by(id: params[:note_id])
         
+        if @note.blank?
+          return { code: 4001, message: "该记录不存在" }
+        end
+        
         user = User.find_by(private_token: params[:token])
         if user.present?
           @note.blike = user.liked?(@note)
