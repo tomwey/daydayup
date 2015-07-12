@@ -277,6 +277,7 @@ module API
         @follower_ids.each do |id|
           follower = User.find_by(id: id)
           goal = Goal.no_deleted.where(user_id: id).order('id DESC').first
+          follower.is_followed = true
           hash = follower.as_json
           hash[:goal] = { id: goal.id, title: goal.title || "" }
           @followers << hash
