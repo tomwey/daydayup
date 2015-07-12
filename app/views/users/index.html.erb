@@ -15,6 +15,7 @@
           <th>手机</th>
           <th>昵称</th>
           <th>个人签名</th>
+          <th>目标数</th>
           <th>粉丝数</th>
           <th>关注数</th>
           <th>操作</th>
@@ -29,6 +30,7 @@
             <td><%= user.mobile %></td>
             <td><%= user.nickname %></td>
             <td><%= user.signature %></td>
+            <td><%= user.goals.count %></td>
             <td><%= user.followers_count %></td>
             <td><%= user.following_count %></td>
             <td>

@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   
   resources :goals do
     get :search, on: :collection
+    resources :notes, only: [:destroy]
   end
   resources :categories
   resources :comments, only: [:index, :destroy]

@@ -1,0 +1,37 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5><%= @goal.title %></h5>
+  </div>
+  <div class="panel-body">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>记录内容</th>
+          <th>记录时间</th>
+          <th>记录图片</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @notes.each do |note| %>
+          <tr>
+            <td width="10%"><%= note.id %></td>
+            <td width="30%"><%= note.body %></td>
+            <td width="15%"><%= note.created_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
+            <td width="30%">
+              <% note.photos.order('id desc').each do |photo| %>
+                <%= image_tag photo.image.url(:small), size: '80x80' %>
+              <% end %>
+            </td>
+            <td width="5%">
+              <%= link_to "删除", goal_note_path(@goal,note), method: :delete, data: { confirm: '您确定吗？' }, class: "btn btn-xs btn-danger" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <div style="text-align: center;"><%= will_paginate @notes, renderer: BootstrapPagination::Rails %></div>
+  </div>
+</div>

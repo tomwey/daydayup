@@ -9,7 +9,8 @@ class GoalsController < ApplicationController
   end
   
   def show
-    @goal = Goal.find(params[:id])
+    @goal = Goal.includes(:notes).find(params[:id])
+    @notes = @goal.notes.order('id desc').paginate page: params[:page], per_page: 30
   end
   
   def destroy
