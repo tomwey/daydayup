@@ -14,6 +14,8 @@ module API
         requires :is_supervise, type: Integer, desc: "整数，0或1，0表示false, 1表示true"
         optional :body, type: String, desc: "具体目标计划"
         requires :type_id, type: Integer, desc: "类别id"
+        requires :latitude, type: String, desc: "纬度，数字字符串，必须"
+        requires :longitude, type: String, desc: "经度，数字字符串，必须"
       end
       post :create do
         user = authenticate!
@@ -33,6 +35,8 @@ module API
                      category_id: type.id)
         
         g.user_id = user.id
+        
+        item.location = 'POINT(' + "#{params[:longitude]}" + ' ' + "#{params[:latitude]}" + ')'
       
         if g.save
           { code: 0, message: "ok", data: g }
