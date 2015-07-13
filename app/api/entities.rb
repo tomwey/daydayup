@@ -54,6 +54,9 @@ module API
       expose :expired_at, format_with: :chinese_datetime
       expose :category, as: :type, using: API::Entities::Category
       expose :user, as: :owner, using: API::Entities::User
+      expose :supervise_id do |model, opts|
+        model.supervise.try(:id) || ""
+      end
       expose :state do |model, opts|
         if model.supervise.blank? or !model.is_supervise
           'normal'
