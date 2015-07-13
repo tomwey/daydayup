@@ -66,7 +66,7 @@ module API
         end
       end
       expose :supervise, as: :supervisor do |model, opts|
-        if model.supervise.blank? or !model.supervise.accepted
+        if model.supervise.blank?
           {}
         else
           model.supervise.user.as_json
