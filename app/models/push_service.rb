@@ -3,15 +3,23 @@ require 'jpush'
 class PushService
     
   def self.publish(message)
-    
-    actor_name = message.actor.try(:nickname) || ''
-    msg = actor_name + message.body
-    
     if message.message_type.to_i == 1
       # 系统消息，推送给所有人
-      PushService.push(msg)
+      PushService.push(message.body)
     else
       # 其他消息推送给指定的人
+      actor_name = message.actor.try(:nickname) || ''
+      
+      msg = if message.message_type.to_i == 2
+        actor_name + '评论了我的目标'
+      elsif message.message_type.to_i == 3
+        actor_name + '给我的目标加油了'
+      elsif message.message_type.to_i == 4
+        actor_name + "关注了我"
+      else
+        ''
+      end
+      
       to = []
       to << message.user.mobile if message.user
       PushService.push(msg, to, { actor: { nickname: message.actor.nickname, avatar: message.actor.avatar_url } })
