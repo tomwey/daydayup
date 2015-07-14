@@ -173,6 +173,7 @@ module API
             supervisor: @goal.supervisor,
             is_cheered: @goal.is_cheered || false,
             is_followed: @goal.is_followed || false,
+            is_abandon: @goal.is_abandon,
             notes: @goal.notes.includes(:photos).order('id desc') || [],
             type: @goal.category || {},
             owner: @goal.user || {},
