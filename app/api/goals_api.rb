@@ -36,7 +36,7 @@ module API
         
         g.user_id = user.id
         
-        item.location = 'POINT(' + "#{params[:longitude]}" + ' ' + "#{params[:latitude]}" + ')'
+        g.location = 'POINT(' + "#{params[:longitude]}" + ' ' + "#{params[:latitude]}" + ')'
       
         if g.save
           { code: 0, message: "ok", data: g }
