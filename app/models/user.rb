@@ -131,7 +131,7 @@ class User < ActiveRecord::Base
   # 判断是否正在关注某个目标
   def following_goal?(goal)
     return false if goal.blank?
-    Follow.where(user_id: user.id, goal_id: goal.id).count > 0
+    Follow.where(user_id: self.id, goal_id: goal.id).count > 0
   end
   
   # 取消关注目标

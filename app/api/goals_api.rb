@@ -276,8 +276,13 @@ module API
       post '/:goal_id/cheer' do
         user = authenticate!
         
+        goal = Goal.find_by(id: params[:goal_id])
+        if goal.blank?
+          return { code: 4001, message: "该目标不存在" }
+        end
+        
         if user.cheer(goal)
-          Message.create!(actor_id: user.id, user_id: goal.user, body: goa.id)
+          Message.create!(actor_id: user.id, user_id: goal.user, body: goal.id)
           { code: 0, message: "ok" }
         else
           { code: 2005, message: "加油失败" }
@@ -292,6 +297,11 @@ module API
       end
       post '/:goal_id/uncheer' do
         user = authenticate!
+        
+        goal = Goal.find_by(id: params[:goal_id])
+        if goal.blank?
+          return { code: 4001, message: "该目标不存在" }
+        end
         
         if user.uncheer(goal)
           { code: 0, message: "ok" }
