@@ -132,7 +132,7 @@ module API
       expose :supervise_completed_goals_count do |model, opts|
         model.goals.where('expired_at <= ? and supervisor_id is not null', Time.now).count
       end
-      expose :goals, using: API::Entities::UserGoalDetail do |model, opts|
+      expose :goals, using: API::Entities::MyFollowingGoalDetail do |model, opts|
         model.goals.no_deleted.order('id DESC')
       end
     end
