@@ -78,6 +78,18 @@ module API
       end
     end
     
+    class MySuperviseGoalDetail < BaseEntity
+      expose :title, format_with: :null
+      expose :state_intro do |model, opts|
+        model.supervise_state_intro
+      end
+      expose :supervising do |model, opts|
+        model.supervising?
+      end
+      expose :category, as: :type, using: API::Entities::Category
+      # expose :user, as: :owner, using: API::Entities::User
+    end
+    
     class UserDetail < BaseEntity
       expose :mobile, format_with: :null
       expose :nickname, format_with: :null

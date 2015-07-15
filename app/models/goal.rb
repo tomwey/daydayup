@@ -51,6 +51,37 @@ class Goal < ActiveRecord::Base
     end
   end
   
+  def supervisor_changed?
+    self.supervisor_id.blank? or self.supervisor_id.to_i != self.supervise.try(:user_id)
+  end
+  
+  def completed?
+    ( !self.is_abandon and self.expired_at < Time.now )
+  end
+  
+  def supervising?
+    if self.supervise.blank?
+      return false
+    end
+    
+    ( !self.is_abandon and !completed? and !supervisor_changed? )
+    
+  end
+  
+  def supervise_state_intro
+    msg = if self.is_abandon
+      "目标失败，督促结束"
+    elsif self.completed?
+      "已完成，督促成功"
+    elsif self.supervisor_changed?
+      "已更换督促人"
+    else
+      '到期时间：' + self.expired_at.strftime('%Y.%m.%d')
+    end
+    msg
+    
+  end
+  
   def is_supervised?
     self.supervisor_id.present?
     # supervise = Supervise.where(goal_id: self.id, accepted: true).first

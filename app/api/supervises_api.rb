@@ -15,6 +15,18 @@ module API
         
         goal = Goal.find(params[:goal_id])
         
+        if goal.is_abandon
+          return { code: 4013, message: "目标已经放弃，不能督促" }
+        end
+        
+        if goal.completed?
+          return { code: 4013, message: "目标已经完成，不能督促" }
+        end
+        
+        if goal.supervisor_id.present?
+          return { code: 4013, message: "该目标已经有督促人了" }
+        end
+        
         if user == goal.user
           return { code: 4003, message: "自己不能督促自己的目标" }
         end
@@ -91,8 +103,12 @@ module API
         
         @goal = user.goals.find(params[:goal_id])
         
+        if @goal.supervisor_id.blank?
+          return { code: 4009, message: "该目标没有督促人" }
+        end
+        
         # 只有同意督促后，目标才有督促人，才可以更换督促人
-        supervise = Supervise.where(goal_id: @goal.id, accepted: true).first
+        supervise = Supervise.where(goal_id: @goal.id, accepted: true, user_id: @goal.supervisor_id).first
         if supervise.blank?
           return { code: 4007, message: "要更换的督促不存在" }
         end
@@ -100,11 +116,32 @@ module API
         # 减少目标督促数
         supervise.user.change_supervises_count(-1) if supervise.user
         
-        @goal.update_attribute(:supervisor_id, nil)
+        if @goal.update_attribute(:supervisor_id, nil)
+          { code: 0, message: "ok" }
+        else
+          { code: 4008, message: "更换督促人失败" }
+        end
         
-        supervise.destroy
+      end # end destroy
+      
+      # 删除非督促
+      desc '删除非督促'
+      params do
+        requires :token, type: String, desc: "Token"
+      end
+      post '/:supervise_id/destroy' do
+        user = authenticate!
         
-        { code: 0, message: "ok" }
+        s = Supervise.find_by(user_id: user.id, id: params[:supervise_id])
+        if s.blank?
+          return { code: 4001, message: "该督促不存在" }
+        end
+        
+        if s.destroy
+          { code: 0, message: "ok" }
+        else
+          { code: 4020, message: "删除督促失败" }
+        end
         
       end # end destroy
       
