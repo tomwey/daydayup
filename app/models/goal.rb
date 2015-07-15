@@ -82,6 +82,17 @@ class Goal < ActiveRecord::Base
     
   end
   
+  def follow_state_intro
+    msg = if self.is_abandon
+      "已放弃"
+    elsif self.completed?
+      "已完成"
+    else
+      '到期时间：' + self.expired_at.strftime('%Y.%m.%d')
+    end
+    msg
+  end
+  
   def is_supervised?
     self.supervisor_id.present?
     # supervise = Supervise.where(goal_id: self.id, accepted: true).first

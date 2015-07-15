@@ -177,7 +177,7 @@ module API
       get :goals do
         user = authenticate!
         
-        @goals = user.goals.includes(:supervise).no_deleted.paginate page: params[:page], per_page: page_size
+        @goals = user.goals.includes(:supervise).no_deleted.order('id desc').paginate page: params[:page], per_page: page_size
         
         render_json(@goals, API::Entities::MyGoalDetail)
       end # end 
@@ -205,7 +205,7 @@ module API
         
         @goals = user.followed_goals.no_deleted.paginate page: params[:page], per_page: page_size
         
-        render_json(@goals, API::Entities::MyGoalDetail)
+        render_json(@goals, API::Entities::MyFollowingGoalDetail)
       end
       
       # 关注某一个用户

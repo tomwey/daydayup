@@ -48,13 +48,17 @@ module API
       end
     end
     
+    # 我的目标
     class MyGoalDetail < BaseEntity
       expose :title, format_with: :null
-      expose :body, format_with: :null
-      expose :expired_at, format_with: :chinese_datetime
+      # expose :body, format_with: :null
+      # expose :expired_at, format_with: :chinese_datetime
+      expose :state_intro do |model, opts|
+        model.follow_state_intro
+      end
       expose :category, as: :type, using: API::Entities::Category
-      expose :user, as: :owner, using: API::Entities::User
-      expose :is_abandon
+      # expose :user, as: :owner, using: API::Entities::User
+      # expose :is_abandon
       expose :supervise_id do |model, opts|
         model.supervise.try(:id) || ""
       end
@@ -78,6 +82,7 @@ module API
       end
     end
     
+    # 我督促的目标
     class MySuperviseGoalDetail < BaseEntity
       expose :title, format_with: :null
       expose :state_intro do |model, opts|
@@ -85,6 +90,23 @@ module API
       end
       expose :supervising do |model, opts|
         model.supervising?
+      end
+      expose :category, as: :type, using: API::Entities::Category
+      # expose :user, as: :owner, using: API::Entities::User
+    end
+    
+    # 我关注的目标
+    class MyFollowingGoalDetail < BaseEntity
+      expose :title, format_with: :null
+      expose :state_intro do |model, opts|
+        model.follow_state_intro
+      end
+      expose :supervise, as: :supervisor do |model, opts|
+        if model.supervise.blank?
+          {}
+        else
+          model.supervise.user.as_json
+        end
       end
       expose :category, as: :type, using: API::Entities::Category
       # expose :user, as: :owner, using: API::Entities::User
