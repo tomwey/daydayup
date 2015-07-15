@@ -38,6 +38,12 @@ module API
         
         Supervise.create!(user_id: user.id, goal_id: goal.id)
         
+        # 发送消息
+        msg = user.nickname || user.mobile + '请求督促您的目标' + goal.title
+        to = []
+        to << goal.user.mobile
+        PushService.push(msg, to)
+        
         { code: 0, message: "ok" }
         
       end # end create
@@ -62,6 +68,13 @@ module API
         if supervise.update_attribute(:accepted, true)
           supervise.user.change_supervises_count(1)
           @goal.update_attribute(:supervisor_id, supervise.user.id)
+          
+          # 发送消息
+          msg = '我申请督促目标' + @goal.title + '被通过'
+          to = []
+          to << supervise.user.mobile
+          PushService.push(msg, to)
+          
           { code: 0, message: "ok" }
         else
           { code: 4005, message: "接受督促失败" }
@@ -85,6 +98,12 @@ module API
         if supervise.blank?
           return { code: 4006, message: "要拒绝的督促不存在" }
         end
+        
+        # 发送消息
+        msg = '我申请督促目标' + @goal.title + '被拒绝'
+        to = []
+        to << supervise.user.mobile
+        PushService.push(msg, to)
         
         supervise.destroy
         

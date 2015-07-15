@@ -242,7 +242,19 @@ module API
       post '/friendships/destroy' do
         user = authenticate!
         
-        if user.unfollow(User.find_by(id: params[:user_id]))
+        u = User.find_by(id: params[:user_id])
+        if u.blank?
+          return { code: 4001, message: "取消关注的用户不存在" }
+        end
+        
+        if user.unfollow(u)
+          
+          # 发送消息
+          msg = user.nickname || user.mobile + '对我取消了关注'
+          to = []
+          to << u.mobile
+          PushService.push(msg, to)
+          
           { code: 0, message: "ok" }
         else
           { code: 1012, message: "取消关注失败" }
