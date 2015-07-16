@@ -28,7 +28,7 @@ class PushService
   end
   
   def self.push(msg, receipts = [], extras_data = {})
-    client = JPush::JPushClient.new('0b5929744cf9e0f018267d19', '7692f9b1cd39df15f67eec47');
+    client = JPush::JPushClient.new('aa6cdedee46af42bcf3ee2e3', '9bd8843964a0aa34517695b7');
       
     logger = Logger.new(STDOUT);
     
