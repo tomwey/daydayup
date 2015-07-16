@@ -16,6 +16,7 @@ class Message < ActiveRecord::Base
       id: self.id,
       type: self.message_type,
       content: self.content,
+      comment_body: self.comment_body,
       sender: self.actor || {},
       receiver: self.user || {},
       send_time: self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
@@ -29,6 +30,14 @@ class Message < ActiveRecord::Base
     when 3 then self.goal_title
     when 4 then '关注了我'
     else ''
+    end
+  end
+  
+  def comment_body
+    if self.message_type.to_i == 2
+      self.body.split('-').last
+    else
+      ""
     end
   end
   

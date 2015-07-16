@@ -167,7 +167,29 @@ class User < ActiveRecord::Base
   end
   
   def calcu_level
-    "LV1"
+    score = self.calcu_score.to_i
+    if score <= 99
+      "LV1"
+    elsif score <= 299
+      "LV2"
+    elsif score <= 999
+      "LV3"
+    elsif score <= 2999
+      "LV4"
+    elsif score <= 5999
+      "LV5"
+    elsif score <= 9999
+      "LV6"
+    else
+      "LV7"
+    end
+  end
+  
+  def calcu_score
+    completed_count = self.goals.no_deleted.no_abandon.where('expired_at < ?', Time.now).count
+    supervise_completed_count = self.goals.no_deleted.no_abandon.where('expired_at < ? and supervisor_id is not null', Time.now).count
+        
+    completed_count + supervise_completed_count
   end
   
   def avatar_url

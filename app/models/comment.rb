@@ -6,7 +6,7 @@ class Comment < ActiveRecord::Base
   
   after_create do
     if note.goal.user.id != self.user.id
-      Message.create!(actor_id: user.id, message_type: 2, user_id: note.goal.user.id, body: "#{note.goal.id}-#{self.id}")
+      Message.create!(actor_id: user.id, message_type: 2, user_id: note.goal.user.id, body: "#{note.goal.id}-#{self.id}-#{self.body}")
     end
   end
   
