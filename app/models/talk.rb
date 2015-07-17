@@ -6,7 +6,7 @@ class Talk < ActiveRecord::Base
   
   after_create do
     to = []
-    to << self.receiver.mobile if self.receiver
+    to << self.receiver.private_token if self.receiver
     PushService.push("有人给您打招呼了", 
                      to, { nickname: self.sender.try(:nickname) || '匿名', avatar: self.sender.try(:avatar_url), msg: self.content || '' })
   end

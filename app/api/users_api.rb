@@ -252,7 +252,7 @@ module API
           # 发送消息
           msg = user.nickname || user.mobile + '对我取消了关注'
           to = []
-          to << u.mobile
+          to << u.private_token
           PushService.push(msg, to)
           
           { code: 0, message: "ok" }

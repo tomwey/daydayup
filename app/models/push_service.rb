@@ -21,7 +21,7 @@ class PushService
       end
       
       to = []
-      to << message.user.mobile if message.user
+      to << message.user.private_token if message.user
       PushService.push(msg, to, { actor: { nickname: message.actor.nickname, avatar: message.actor.avatar_url } })
     end
     

@@ -32,8 +32,10 @@ class User < ActiveRecord::Base
     random_key = "#{SecureRandom.hex(10)}"
     self.update_attribute(:private_token, random_key)
     
-    rand_string = "DD" + Array.new(6){[*'0'..'9'].sample}.join
-    self.update_attribute(:nickname, rand_string)
+    if self.nickname.blank?
+      rand_string = "DD" + Array.new(6){[*'0'..'9'].sample}.join
+      self.update_attribute(:nickname, rand_string)
+    end
     
   end
   

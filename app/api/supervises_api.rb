@@ -41,7 +41,7 @@ module API
         # 发送消息
         msg = user.nickname || user.mobile + '请求督促您的目标' + goal.title
         to = []
-        to << goal.user.mobile
+        to << goal.user.private_token
         PushService.push(msg, to)
         
         { code: 0, message: "ok" }
@@ -72,7 +72,7 @@ module API
           # 发送消息
           msg = '我申请督促目标' + @goal.title + '被通过'
           to = []
-          to << supervise.user.mobile
+          to << supervise.user.private_token
           PushService.push(msg, to)
           
           { code: 0, message: "ok" }
@@ -102,7 +102,7 @@ module API
         # 发送消息
         msg = '我申请督促目标' + @goal.title + '被拒绝'
         to = []
-        to << supervise.user.mobile
+        to << supervise.user.private_token
         PushService.push(msg, to)
         
         supervise.destroy
