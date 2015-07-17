@@ -191,7 +191,7 @@ class User < ActiveRecord::Base
     
     # 计算加油积分
     cheers = Cheer.joins(:goal).where('goals.user_id = ?', self.id)
-    cheer_count_hash = cheers.group('DATE(created_at)').count
+    cheer_count_hash = cheers.group('DATE(cheers.created_at)').count
     cheer_score = 0
     if cheer_count_hash
       cheer_count_hash.each do |k,v|
@@ -202,7 +202,7 @@ class User < ActiveRecord::Base
     # 计算评论积分
     note_ids = Note.joins(:goal).where('goals.user_id = ?', self.id)
     comments = Comment.where(note_id: note_ids)
-    comment_count_hash = comments.group('DATE(created_at)').count
+    comment_count_hash = comments.group('DATE(comments.created_at)').count
     
     comment_score = 0
     if comment_count_hash
