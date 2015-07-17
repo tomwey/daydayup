@@ -1,5 +1,5 @@
 class BannersController < ApplicationController
-  
+  skip_before_filter :authenticate_admin!, only: :show
   layout :layout_by_action
   
   def layout_by_action
