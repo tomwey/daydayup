@@ -188,8 +188,30 @@ class User < ActiveRecord::Base
   def calcu_score
     completed_count = self.goals.no_deleted.no_abandon.where('expired_at < ?', Time.now).count
     supervise_completed_count = self.goals.no_deleted.no_abandon.where('expired_at < ? and supervisor_id is not null', Time.now).count
-        
-    completed_count + supervise_completed_count
+    
+    # 计算加油积分
+    cheers = Cheer.joins(:goal).where('goals.user_id = ?', self.id)
+    cheer_count_hash = cheers.group('DATE(created_at)').count
+    cheer_score = 0
+    if cheer_count_hash
+      cheer_count_hash.each do |k,v|
+        cheer_score += [v.to_i * 1, 10].min
+      end
+    end
+    
+    # 计算评论积分
+    note_ids = Note.joins(:goal).where('goals.user_id = ?', self.id)
+    comments = Comment.where(note_id: note_ids)
+    comment_count_hash = comments.group('DATE(created_at)').count
+    
+    comment_score = 0
+    if comment_count_hash
+      comment_count_hash.each do |k, v|
+        comment_score += [v.to_i * 2, 6].min
+      end
+    end
+    
+    completed_count + supervise_completed_count + cheer_score + comment_score
   end
   
   def avatar_url

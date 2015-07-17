@@ -33,6 +33,20 @@ class Message < ActiveRecord::Base
     end
   end
   
+  def message_body
+    case self.message_type.to_i
+    when 1 then self.body || ''
+    when 2 then actor_name + '：评论了我的目标【' + self.goal_title + '】'
+    when 3 then actor_name + '：加油了我的目标【' + self.goal_title + '】'
+    when 4 then actor_name + '：关注了我'
+    else ''
+    end
+  end
+  
+  def actor_name
+    self.actor.try(:nickname) || self.actor.try(:mobile) || '系统'
+  end
+  
   def comment_body
     if self.message_type.to_i == 2
       self.body.split('-').last

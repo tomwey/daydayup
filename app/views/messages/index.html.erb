@@ -26,9 +26,9 @@
         <% @messages.each do |message| %>
           <tr>
             <td><%= message.id %></td>
-            <td><%= message.body %></td>
+            <td width='50%'><%= message.message_body %></td>
             <td><%= message.user.try(:nickname) || '所有用户' %></td>
-            <td><%= message.actor.try(:nickname) || '系统' %></td>
+            <td><%= message.actor_name %></td>
             <td><%= render_message_type(message) %></td>
             <td><%= message.created_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
           </tr>
