@@ -12,7 +12,7 @@ gem 'activerecord-postgis-adapter'
 
 # 上传组件
 gem 'carrierwave', '~> 0.10.0'
-gem 'mini_magick','3.7.0', require: false
+gem 'mini_magick','~> 4.2.7'#, require: false
 
 gem 'bootstrap-sass', '~> 3.2.0'
 
@@ -28,6 +28,8 @@ gem 'redactor-rails'
 # YAML 配置信息
 gem 'settingslogic', '~> 2.0.9'
 
+# 解决大文件上传报内存问题：Cannot allocate memory - identify
+gem 'posix-spawn'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'
 # Use Uglifier as compressor for JavaScript assets
