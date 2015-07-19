@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
       constellation: self.constellation || "",
       followers_count: self.followers_count,
       following_count: self.following_count,
-      goals_count: self.goals.count,
+      goals_count: self.completed_goals_count,
       supervises_count: self.supervises_count,
       is_followed: self.is_followed || false,
     }
@@ -74,6 +74,10 @@ class User < ActiveRecord::Base
   # def following_count
   #   self.following_users.count
   # end
+  
+  def completed_goals_count
+    self.goals.no_abandon.where('expired_at <= ?', Time.now).count
+  end
   
   # 判断是否正在关注某个用户
   def following?(user)
