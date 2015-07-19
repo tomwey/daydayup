@@ -59,6 +59,7 @@ class User < ActiveRecord::Base
       constellation: self.constellation || "",
       followers_count: self.followers_count,
       following_count: self.following_count,
+      goals_count: self.goals.count,
       supervises_count: self.supervises_count,
       is_followed: self.is_followed || false,
     }
