@@ -39,10 +39,12 @@ module API
         Supervise.create!(user_id: user.id, goal_id: goal.id)
         
         # 发送消息
-        msg = user.nickname || user.mobile + '请求督促您的目标' + goal.title
-        to = []
-        to << goal.user.private_token
-        PushService.push(msg, to)
+        if goal.user.push_opened_for?(6)
+          msg = user.nickname || user.mobile + '请求督促您的目标' + goal.title
+          to = []
+          to << goal.user.private_token
+          PushService.push(msg, to)
+        end
         
         { code: 0, message: "ok" }
         
@@ -70,10 +72,12 @@ module API
           @goal.update_attribute(:supervisor_id, supervise.user.id)
           
           # 发送消息
-          msg = '我申请督促目标' + @goal.title + '被通过'
-          to = []
-          to << supervise.user.private_token
-          PushService.push(msg, to)
+          if supervise.user.push_opened_for?(6)
+            msg = '我申请督促目标' + @goal.title + '被通过'
+            to = []
+            to << supervise.user.private_token
+            PushService.push(msg, to)
+          end
           
           { code: 0, message: "ok" }
         else
@@ -100,10 +104,12 @@ module API
         end
         
         # 发送消息
-        msg = '我申请督促目标' + @goal.title + '被拒绝'
-        to = []
-        to << supervise.user.private_token
-        PushService.push(msg, to)
+        if supervise.user.push_opened_for?(6)
+          msg = '我申请督促目标' + @goal.title + '被拒绝'
+          to = []
+          to << supervise.user.private_token
+          PushService.push(msg, to)
+        end
         
         supervise.destroy
         

@@ -250,10 +250,12 @@ module API
         if user.unfollow(u)
           
           # 发送消息
-          msg = user.nickname || user.mobile + '对我取消了关注'
-          to = []
-          to << u.private_token
-          PushService.push(msg, to)
+          if u.push_opened_for?(4)
+            msg = user.nickname || user.mobile + '对我取消了关注'
+            to = []
+            to << u.private_token
+            PushService.push(msg, to)
+          end
           
           { code: 0, message: "ok" }
         else
@@ -411,6 +413,50 @@ module API
           { code: 1006, message: user.errors.full_messages.join(",") }
         end
       end # end update profile
+      
+      # 获取消息提醒状态
+      desc '获取消息提醒状态'
+      params do
+        requires :token, type: String, desc: "认证Token"
+      end
+      get :push_settings do
+        user = authenticate!
+        
+        results = []
+        
+        settings = user.push_settings.split(',')
+        User::PUSH_SETTINGS.each_with_index do |s, index|
+          results << { id: index + 1, name: s, is_open: settings[index].to_i == 1 ? true : false }
+        end
+        
+        { code: 0, message: "ok", data: results }
+        # configs = PushConfig.where(user_id: ).order('id asc')
+      end # end get push settings
+      
+      # 修改消息提醒设置
+      desc '修改消息提醒设置'
+      params do
+        requires :token, type: String, desc: "认证Token"
+        requires :push_setting_id, type: Integer, desc: "推送设置id"
+        requires :is_open, type: Integer, desc: "是否打开，值为：0或1，0表示关闭，1表示打开"
+      end
+      post '/push_settings/update' do
+        user = authenticate!
+        
+        unless %w(0 1).include?(params[:is_open].to_s)
+          return { code: -1, message: "不正确的参数值，值应为0,1之一" }
+        end 
+        
+        settings = user.push_settings.split(',')
+        settings[params[:push_setting_id].to_i - 1] = params[:is_open].to_i
+        
+        if user.update_attribute(:push_settings, settings.join(','))
+          { code: 0, message: "ok" }
+        else
+          { code: 1130, message: "更新推送设置失败" }
+        end
+        
+      end
       
     end # end user resource
     

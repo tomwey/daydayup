@@ -20,6 +20,8 @@ class User < ActiveRecord::Base
   length: { is: 11 }, :uniqueness => true
   
   # validates :nickname, uniqueness: true, allow_nil: true
+  
+  PUSH_SETTINGS = %w(系统消息提醒 评价提醒 加油提醒 关注提醒 私聊提醒 督促提醒)
             
   mount_uploader :avatar, AvatarUploader
   
@@ -36,6 +38,15 @@ class User < ActiveRecord::Base
       rand_string = "DD" + Array.new(6){[*'0'..'9'].sample}.join
       self.update_attribute(:nickname, rand_string)
     end
+    
+  end
+  
+  def push_opened_for?(message_type)
+    return false if push_settings.blank?
+    
+    settings = push_settings.split(',')
+    
+    ( settings[message_type.to_i - 1].to_i == 1 )
     
   end
   

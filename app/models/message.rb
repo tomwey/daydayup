@@ -8,7 +8,9 @@ class Message < ActiveRecord::Base
   validates_presence_of :body
   
   after_create do
-    PushService.publish(self)
+    if user.push_opened_for?(self.message_type.to_i)
+      PushService.publish(self)
+    end
   end
   
   def as_json(opts = {})

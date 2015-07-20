@@ -5,10 +5,12 @@ class Talk < ActiveRecord::Base
   validates :sender_id, :receiver_id, :content, presence: true
   
   after_create do
-    to = []
-    to << self.receiver.private_token if self.receiver
-    PushService.push("有人给您打招呼了", 
-                     to, { nickname: self.sender.try(:nickname) || '匿名', avatar: self.sender.try(:avatar_url), msg: self.content || '' })
+    if self.receiver.push_opened_for?(5)
+      to = []
+      to << self.receiver.private_token if self.receiver
+      PushService.push("有人给您打招呼了", 
+                       to, { nickname: self.sender.try(:nickname) || '匿名', avatar: self.sender.try(:avatar_url), msg: self.content || '' })
+    end
   end
   
   def as_json(opts = {})
