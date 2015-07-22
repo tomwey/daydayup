@@ -22,7 +22,7 @@ class Goal < ActiveRecord::Base
   scope :no_abandon, -> { no_deleted.where(is_abandon: false) }
   scope :hot, -> { no_abandon.order('cheers_count desc, follows_count desc, id desc') }
   scope :recent, -> { no_abandon.order('id desc') }
-  scope :unsupervise, -> { no_abandon.where('is_supervise = ? and supervisor_id is null', true).order('id desc') }
+  scope :unsupervise, -> { no_abandon.where('is_supervise = ? and supervisor_id is null and expired_at > ?', true, Time.zone.now).order('id desc') }
   
   def as_json(opts = {})
     {
