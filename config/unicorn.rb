@@ -1,4 +1,4 @@
-worker_processes 6
+worker_processes 4
 
 root = "/home/deployer/apps/daydayup_production/current"
 working_directory root

@@ -26,8 +26,8 @@ class User < ActiveRecord::Base
   mount_uploader :avatar, AvatarUploader
   
   # scope :goal_geek, -> {  }
-  scope :supervise_geek, -> { order('supervises_count desc') }
-  scope :popular_geek, -> { order('followers_count desc') }
+  scope :supervise_geek, -> { where('supervises_count > 0').order('supervises_count desc') }
+  scope :popular_geek, -> { where('followers_count > 0').order('followers_count desc') }
   
   after_create :generate_private_token
   def generate_private_token
