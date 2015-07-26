@@ -66,7 +66,11 @@ module API
         sender_ids = Talk.select('sender_id').group(:sender_id).map(&:sender_id)
         sender_ids.each do |id|
           talk = Talk.where('(receiver_id = :id1 and sender_id = :id2) or (sender_id = :id1 and receiver_id = :id2)', id1: user.id, id2: id).order('id DESC').first
-          count = Talk.where('sender_id = ? and read = ?', id, false).count
+          if user.id == id
+            count = 0
+          else
+            count = Talk.where('sender_id = ? and read = ?', id, false).count
+          end
           
           if talk
             item << { type: 5, unread_messages_count: count, latest_message: talk }
