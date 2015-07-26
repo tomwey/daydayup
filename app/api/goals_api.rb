@@ -55,7 +55,7 @@ module API
         optional :token, type: String, desc: "认证Token"
       end
       get :nearby do
-        @goals = Goal.select("DISTINCT ON (user_id) *, st_distance(location, 'point(#{params[:longitude]} #{params[:latitude]})') as distance").order("user_id, distance ASC, goals.id DESC")
+        @goals = Goal.select("goals.*, user_id, st_distance(location, 'point(#{params[:longitude]} #{params[:latitude]})') as distance").order("distance ASC, id DESC").distinct('user_id')
         
         if params[:gender]
           @goals = @goals.joins(:user).where('users.gender = ?', params[:gender])

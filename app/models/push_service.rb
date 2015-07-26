@@ -28,13 +28,13 @@ class PushService
   end
   
   def self.push(msg, receipts = [], extras_data = {})
-    client = JPush::JPushClient.new('aa6cdedee46af42bcf3ee2e3', '9bd8843964a0aa34517695b7');
+    client = JPush::JPushClient.new('112e6f664d3de8d9a6864198', '2a7fe23061a46e24c12451f2');
       
     logger = Logger.new(STDOUT);
     
     if receipts.any?
-      tags = receipts.map { |to| "tel#{to}" }
-      audience = JPush::Audience.build(tag: tags)
+      # tags = receipts.map { |to| "tel#{to}" }
+      audience = JPush::Audience.build(tag: receipts)
     else
       audience = JPush::Audience.all
     end

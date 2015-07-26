@@ -62,8 +62,9 @@ module API
           
         end
         
+        # sender_id, receiver_id, content
         # 获取聊天信息
-        sender_ids = Talk.select('sender_id').group(:sender_id).map(&:sender_id)
+        sender_ids = Talk.select('sender_id').where('sender_id = :id or receiver_id = :id', id: user.id).group(:sender_id).map(&:sender_id)
         sender_ids.each do |id|
           talk = Talk.where('(receiver_id = :id1 and sender_id = :id2) or (sender_id = :id1 and receiver_id = :id2)', id1: user.id, id2: id).order('id DESC').first
           if user.id.to_i == id.to_i
