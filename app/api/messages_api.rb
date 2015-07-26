@@ -65,7 +65,7 @@ module API
         # 获取聊天信息
         sender_ids = Talk.select('sender_id').group(:sender_id).map(&:sender_id)
         sender_ids.each do |id|
-          talk = Talk.where('receiver_id = ? and sender_id = ?', user.id, id).order('id DESC').first
+          talk = Talk.where('(receiver_id = :id1 and sender_id = :id2) or (sender_id = :id1 and receiver_id = :id2)', id1: user.id, id2: id).order('id DESC').first
           count = Talk.where('sender_id = ? and read = ?', id, false).count
           
           if talk
