@@ -74,6 +74,8 @@ module API
             count = Talk.where('sender_id = ? and read = ?', id, false).count
           end
           
+          puts 'count: ' + count.to_s
+          
           if talk
             item << { type: 5, unread_messages_count: count, latest_message: talk }
           end
