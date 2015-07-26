@@ -67,8 +67,10 @@ module API
         sender_ids.each do |id|
           talk = Talk.where('(receiver_id = :id1 and sender_id = :id2) or (sender_id = :id1 and receiver_id = :id2)', id1: user.id, id2: id).order('id DESC').first
           if user.id.to_i == id.to_i
+            puts user.id.to_s + '--' + id.to_s
             count = 0
           else
+            puts id.to_s
             count = Talk.where('sender_id = ? and read = ?', id, false).count
           end
           
