@@ -63,7 +63,7 @@ module API
         model.supervise.try(:id) || ""
       end
       expose :state do |model, opts|
-        if model.supervise.blank? or !model.is_supervise
+        if model.supervise.blank? or !model.is_supervise or model.supervisor_id.blank?
           'normal'
         else
           if model.supervise.accepted
