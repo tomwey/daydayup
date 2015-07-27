@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
   
   # validates :nickname, uniqueness: true, allow_nil: true
   
-  PUSH_SETTINGS = %w(系统消息提醒 评价提醒 加油提醒 关注提醒 私聊提醒 督促提醒)
+  PUSH_SETTINGS = %w(评价提醒 加油提醒 关注提醒 私聊提醒 督促提醒)
             
   mount_uploader :avatar, AvatarUploader
   
