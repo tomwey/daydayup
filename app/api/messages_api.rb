@@ -22,12 +22,16 @@ module API
         total = Message.unread.where('message_type != 1 and user_id = ?', user.id).count
         
         # 检测聊天记录
-        # if user.last_read_talk_at.blank?
-        #   talk_total = Talk.where('receiver_id = ?', user.id).count
-        # else
-        #   talk_total = Talk.where('created_at > ? and receiver_id = ?', user.last_read_talk_at, user.id).count
+        talk_total = 0
+        room_ids = Room.where('sponsor_id = :id or audience_id = :id', id: user.id).map(&:id)
+        if room_ids.any?
+          talk_total = Talk.where(room_id: room_ids).where('receiver_id = ? and read = ?', user.id, false).count
+        end
+        
+        # rooms.each do |room|
+        #   count = room.talks.where('receiver_id = ? and read = ?', user.id, false).count
+        #   talk_total += count
         # end
-        talk_total = Talk.where('read = ? and receiver_id = ?', false, user.id).count
         
         { code: 0, message: "ok", data: { total: ( total + sys_msg_total + talk_total ) } }
         
