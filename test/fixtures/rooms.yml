@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  sponsor_id: 1
+  audience_id: 1
+  talks_count: 1
+
+two:
+  sponsor_id: 1
+  audience_id: 1
+  talks_count: 1

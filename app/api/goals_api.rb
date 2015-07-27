@@ -68,7 +68,11 @@ module API
           end
         end
         
-        @goals = @goals.paginate(page: params[:page], per_page: page_size).all
+        if params[:page]
+          @goals = @goals.paginate(page: params[:page], per_page: page_size)
+        end
+        
+        @goals = @goals.all
         
         user = User.find_by(private_token: params[:token])
         if user.present?

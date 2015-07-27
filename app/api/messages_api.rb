@@ -64,23 +64,18 @@ module API
         
         # sender_id, receiver_id, content
         # 获取聊天信息
-        sender_ids = Talk.select('sender_id').group(:sender_id).map(&:sender_id)
-        sender_ids.each do |id|
-          talk = Talk.where('(receiver_id = :id1 and sender_id = :id2) or (sender_id = :id1 and receiver_id = :id2)', id1: user.id, id2: id).order('id DESC').first
-          if user.id.to_i == id.to_i
-            # puts user.id.to_s + '--' + id.to_s
-            count = 0
-          else
-            # puts id.to_s
-            count = Talk.where('sender_id = ? and read = ?', id, false).count
+        rooms = Room.where('sponsor_id = :id or audience_id = :id', id: user.id)
+        rooms.each do |room|
+          latest_talk = room.talks.order('id DESC').first
+          if latest_talk
+            if user.id.to_i == room.sponsor_id.to_i
+              audience = room.audience
+            else
+              audience = room.sponsor
+            end
+            count = room.talks.where('receiver_id = ? and read = ?', user.id, false).count
+            item << { type: 5, unread_messages_count: count, latest_message: { id: room.id, audience: audience, content: latest_talk.content } }
           end
-          
-          # puts 'count: ' + count.to_s
-          
-          if talk
-            item << { type: 5, unread_messages_count: count, latest_message: talk }
-          end
-          
         end
         
         { code: 0, message: "ok", data: item }
@@ -120,7 +115,19 @@ module API
       post :send do
         sender = authenticate!
         
-        m = Talk.create!(sender_id: sender.id, receiver_id: params[:receiver_id], content: params[:content])
+        if sender.id.to_i == params[:receiver_id].to_i
+          return { code: -4, message: "你不能跟自己聊天" }
+        end
+        
+        room = Room.where('(sponsor_id = :id1 and audience_id = :id2) or (sponsor_id = :id2 and audience_id = :id1)', id1: sender.id, id2: params[:receiver_id]).first
+        if room.blank?
+          room = Room.create(sponsor_id: sender.id, audience_id: params[:receiver_id])
+          if room.blank?
+            return { code: -5, message: "开启会话失败" }
+          end
+        end
+        
+        m = Talk.create!(sender_id: sender.id, receiver_id: params[:receiver_id], content: params[:content], room_id: room.id)
         
         { code: 0, message: "ok", data: m }
       end # end send
@@ -129,13 +136,20 @@ module API
       desc "获取某个用户发出的聊天记录"
       params do
         requires :token, type: String, desc: "Token"
-        requires :sender_id, type: Integer, desc: "发送消息者id"
+        requires :room_id, type: Integer, desc: "发送消息者id"
       end
       get :read do
         user = authenticate!
         
-        @talks = Talk.where('(sender_id = :user_id_1 and receiver_id = :user_id_2) or (sender_id = :user_id_2 and receiver_id = :user_id_1)', user_id_1: params[:sender_id], user_id_2: user.id)
-        .order('id ASC')
+        room = Room.find_by(id: params[:room_id])
+        if room.blank?
+          return { code: 4001, message: "未找到该聊天会话" }
+        end
+        
+        @talks = room.talks.order('id ASC')
+        if params[:page]
+          @talks = @talks.paginate page: params[:page], per_page: page_size
+        end
         
         # 标记为已读
         Talk.where(receiver_id: user.id).update_all(read: true)
