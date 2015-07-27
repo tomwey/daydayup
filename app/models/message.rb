@@ -8,7 +8,7 @@ class Message < ActiveRecord::Base
   validates_presence_of :body
   
   after_create do
-    if user.push_opened_for?(self.message_type.to_i)
+    if user.blank? or user.push_opened_for?(self.message_type.to_i)
       PushService.publish(self)
     end
   end
