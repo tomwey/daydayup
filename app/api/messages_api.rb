@@ -136,12 +136,12 @@ module API
       desc "获取某个用户发出的聊天记录"
       params do
         requires :token, type: String, desc: "Token"
-        requires :room_id, type: Integer, desc: "发送消息者id"
+        requires :member_id, type: Integer, desc: "发送消息者id"
       end
       get :read do
         user = authenticate!
         
-        room = Room.find_by(id: params[:room_id])
+        room = Room.where('(sponsor_id = :id1 and audience_id = :id2) or (sponsor_id = :id2 and audience_id = :id1)', id1: user.id, id2: params[:member_id]).first
         if room.blank?
           return { code: 4001, message: "未找到该聊天会话" }
         end
