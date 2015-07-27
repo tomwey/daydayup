@@ -22,7 +22,7 @@ class PushService
       
       to = []
       to << message.user.private_token if message.user
-      PushService.push(msg, to, { actor: { nickname: message.actor.nickname, avatar: message.actor.avatar_url } })
+      PushService.push(msg, to, { type: message.message_type, actor: { id: message.actor.id, nickname: message.actor.nickname, avatar: message.actor.avatar_url, msg: msg } })
     end
     
   end

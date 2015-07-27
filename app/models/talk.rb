@@ -11,7 +11,7 @@ class Talk < ActiveRecord::Base
       to = []
       to << self.receiver.private_token if self.receiver
       PushService.push("有人给您打招呼了", 
-                       to, { nickname: self.sender.try(:nickname) || '匿名', avatar: self.sender.try(:avatar_url), msg: self.content || '' })
+                       to, { type: 5, actor: { id: self.sender.try(:id), nickname: self.sender.try(:nickname) || '匿名', avatar: self.sender.try(:avatar_url), msg: self.content || '' } })
     end
   end
   
