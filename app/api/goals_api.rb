@@ -55,8 +55,8 @@ module API
         optional :token, type: String, desc: "认证Token"
       end
       get :nearby do
-        @goals = Goal.select("goals.*, user_id, st_distance(location, 'point(#{params[:longitude]} #{params[:latitude]})') as distance").order("distance ASC, id DESC").distinct('user_id')
         
+        @goals = Goal.select("goals.*, st_distance(location, 'point(#{params[:longitude]} #{params[:latitude]})') as distance").no_deleted.order("distance ASC, id DESC")
         if params[:gender]
           @goals = @goals.joins(:user).where('users.gender = ?', params[:gender])
         end
@@ -72,16 +72,20 @@ module API
           @goals = @goals.paginate(page: params[:page], per_page: page_size)
         end
         
-        @goals = @goals.all
+        goals = []
         
-        user = User.find_by(private_token: params[:token])
-        if user.present?
-          @goals.each do |g|
-            g.user.is_followed = user.following?(g.user)
+        user_ids = Goal.select('user_id').group('user_id').map(&:user_id)
+        user_ids.each do |uid|
+          goal = @goals.where(user_id: uid).first
+          unless goal.blank?
+            goals << goal
           end
         end
         
-        { code: 0, message: 'ok', data: @goals }
+        # 根据距离来排序
+        goals = goals.sort_by{ |g| g.distance }
+        
+        { code: 0, message: 'ok', data: goals }
       end # end nearby
       
       # 获取目标列表
