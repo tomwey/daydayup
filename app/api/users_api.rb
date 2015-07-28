@@ -177,7 +177,7 @@ module API
       get :goals do
         user = authenticate!
         
-        @goals = user.goals.includes(:supervise).no_deleted.order('id desc').paginate page: params[:page], per_page: page_size
+        @goals = user.goals.includes(:supervises).no_deleted.order('id desc').paginate page: params[:page], per_page: page_size
         
         render_json(@goals, API::Entities::MyGoalDetail)
       end # end 
@@ -190,7 +190,7 @@ module API
       get :supervised_goals do
         user = authenticate!
         
-        @goals = Goal.joins(:supervise).where('supervises.user_id = ? and supervises.accepted = ?', user.id, true).no_deleted.order('id desc').paginate page: params[:page], per_page: page_size
+        @goals = Goal.joins(:supervises).where('supervises.user_id = ? and supervises.accepted = ?', user.id, true).no_deleted.order('id desc').paginate page: params[:page], per_page: page_size
         
         render_json(@goals, API::Entities::MySuperviseGoalDetail)
       end

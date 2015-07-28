@@ -14,7 +14,7 @@ class Goal < ActiveRecord::Base
   has_many :notes, dependent: :destroy
   has_many :cheers
   
-  has_one :supervise
+  has_many :supervises
   
   mount_uploader :image, ImageUploader
   
@@ -22,7 +22,7 @@ class Goal < ActiveRecord::Base
   scope :no_abandon, -> { no_deleted.where(is_abandon: false) }
   scope :hot, -> { no_abandon.order('cheers_count desc, follows_count desc, id desc') }
   scope :recent, -> { no_abandon.order('id desc') }
-  scope :unsupervise, -> { no_abandon.where('is_supervise = ? and supervisor_id is null and expired_at > ?', true, Time.zone.now).order('id desc') }
+  # scope :unsupervise, -> { no_abandon.where('is_supervise = ? and supervisor_id is null and expired_at > ?', true, Time.zone.now).order('id desc') }
   
   def as_json(opts = {})
     {
@@ -42,29 +42,55 @@ class Goal < ActiveRecord::Base
     }
   end
   
+  def self.unsupervise
+    joins(:supervises).no_abandon.where('goals.is_supervise = ? and goals.expired_at > ?', true, Time.zone.now).where('supervises.state != ? or supervises.state != ?', 'normal', 'accepted').order('goals.id desc')
+  end
+  
   def supervisor
-    u = User.find_by(id: self.supervisor_id)
-    if u.blank?
+    supervise = supervises.where(state: 'accepted').first
+    if supervise.blank? or supervise.user.blank?
       {}
     else
-      u.as_json
+      supervise.user.as_json
     end
+    # u = User.find_by(id: self.supervisor_id)
+    # if u.blank?
+    #   {}
+    # else
+    #   u.as_json
+    # end
   end
   
   def supervisor_changed?
-    self.supervisor_id.blank? or self.supervisor_id.to_i != self.supervise.try(:user_id)
+    supervises.where(state: 'changed_user').count > 0
+    # self.supervisor_id.blank? or self.supervisor_id.to_i != self.supervise.try(:user_id)
   end
   
   def completed?
     ( !self.is_abandon and self.expired_at < Time.now )
   end
   
-  def supervising?
-    if self.supervise.blank?
-      return false
+  def supervising_id
+    s = supervises.where(state: 'normal').first
+    s.try(:id) || ""
+  end
+  
+  def supervise_state
+    if supervises.where(state: 'accepted').count > 0
+      'accepted'
+    elsif supervises.where(state: 'normal').count > 0
+      'new_request'
+    else
+      'normal'
     end
+  end
+  
+  def supervising?
+    # if self.supervise.blank?
+    #   return false
+    # end
     
-    ( !self.is_abandon and !completed? and !supervisor_changed? )
+    ( !self.is_abandon and !completed? and supervises.where(state: 'accepted').count > 0 )
     
   end
   
@@ -94,9 +120,10 @@ class Goal < ActiveRecord::Base
   end
   
   def is_supervised?
-    self.supervisor_id.present?
+    # self.supervisor_id.present?
     # supervise = Supervise.where(goal_id: self.id, accepted: true).first
     # !!supervise
+    supervises.where(state: ['normal', 'accepted']).count > 0
   end
   
   def supervisor_name

@@ -23,18 +23,22 @@ module API
           return { code: 4013, message: "目标已经完成，不能督促" }
         end
         
-        if goal.supervisor_id.present?
+        if goal.supervises.where(state: 'accepted').count > 0
           return { code: 4013, message: "该目标已经有督促人了" }
+        end
+        
+        if goal.supervises.where(state: 'normal').count > 0
+          return { code: 4013, message: "该目标目前处于督促审核中，不能督促" }
         end
         
         if user == goal.user
           return { code: 4003, message: "自己不能督促自己的目标" }
         end
         
-        supervise = Supervise.find_by(user_id: user.id, goal_id: goal.id)
-        if supervise.present?
-          return { code: 4010, message: "您已经督促过该目标，不能督促了" }
-        end
+        # supervise = Supervise.find_by(user_id: user.id, goal_id: goal.id)
+        # if supervise.present?
+        #   return { code: 4010, message: "您已经督促过该目标，不能督促了" }
+        # end
         
         Supervise.create!(user_id: user.id, goal_id: goal.id)
         
@@ -61,15 +65,15 @@ module API
         
         @goal = user.goals.find(params[:goal_id])
         
-        supervise = Supervise.where(id: params[:id], goal_id: @goal.id, accepted: false).first
+        supervise = Supervise.where(id: params[:id], goal_id: @goal.id, state: 'normal').first
         
         if supervise.blank?
           return { code: 4004, message: "要接受的督促不存在" }
         end
         
-        if supervise.update_attribute(:accepted, true)
+        if supervise.accept
           supervise.user.change_supervises_count(1)
-          @goal.update_attribute(:supervisor_id, supervise.user.id)
+          # @goal.update_attribute(:supervisor_id, supervise.user.id)
           
           # 发送消息
           if supervise.user.push_opened_for?(6)
@@ -97,23 +101,25 @@ module API
         
         @goal = user.goals.find(params[:goal_id])
         
-        supervise = Supervise.where(id: params[:id], goal_id: @goal.id, accepted: false).first
+        supervise = Supervise.where(id: params[:id], goal_id: @goal.id, state: 'normal').first
         
         if supervise.blank?
           return { code: 4006, message: "要拒绝的督促不存在" }
         end
         
-        # 发送消息
-        if supervise.user.push_opened_for?(6)
-          msg = '我申请督促目标' + @goal.title + '被拒绝'
-          to = []
-          to << supervise.user.private_token
-          PushService.push(msg, to)
+        if supervise.refuse
+          # 发送消息
+          if supervise.user.push_opened_for?(6)
+            msg = '我申请督促目标' + @goal.title + '被拒绝'
+            to = []
+            to << supervise.user.private_token
+            PushService.push(msg, to)
+          end
+          
+          { code: 0, message: "ok" }
+        else
+          { code: 4005, message: "拒绝督促失败" }
         end
-        
-        supervise.destroy
-        
-        { code: 0, message: "ok" }
         
       end # end refuse
       
@@ -128,20 +134,25 @@ module API
         
         @goal = user.goals.find(params[:goal_id])
         
-        if @goal.supervisor_id.blank?
+        # if @goal.supervisor_id.blank?
+        #   return { code: 4009, message: "该目标没有督促人" }
+        # end
+        
+        supervise = Supervise.where(goal_id: @goal.id, state: 'accepted').first
+        if supervise.blank?
           return { code: 4009, message: "该目标没有督促人" }
         end
         
         # 只有同意督促后，目标才有督促人，才可以更换督促人
-        supervise = Supervise.where(goal_id: @goal.id, accepted: true, user_id: @goal.supervisor_id).first
-        if supervise.blank?
-          return { code: 4007, message: "要更换的督促不存在" }
-        end
+        # supervise = Supervise.where(goal_id: @goal.id, accepted: true, user_id: @goal.supervisor_id).first
+        # if supervise.blank?
+        #   return { code: 4007, message: "要更换的督促不存在" }
+        # end
         
         # 减少目标督促数
         supervise.user.change_supervises_count(-1) if supervise.user
         
-        if @goal.update_attribute(:supervisor_id, nil)
+        if supervise.change#@goal.update_attribute(:supervisor_id, nil)
           { code: 0, message: "ok" }
         else
           { code: 4008, message: "更换督促人失败" }

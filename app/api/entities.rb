@@ -60,26 +60,30 @@ module API
       # expose :user, as: :owner, using: API::Entities::User
       # expose :is_abandon
       expose :supervise_id do |model, opts|
-        model.supervise.try(:id) || ""
+        model.supervising_id
       end
       expose :state do |model, opts|
-        if model.supervise.blank? or !model.is_supervise or ( model.supervisor_id.blank? and model.supervise )
-          'normal'
-        else
-          if model.supervise.accepted
-            'accepted'
-          else
-            'new_request'
-          end
-        end
+        # if model.supervise.blank? or !model.is_supervise or ( model.supervisor_id.blank? and model.supervise )
+        #   'normal'
+        # else
+        #   if model.supervise.accepted
+        #     'accepted'
+        #   else
+        #     'new_request'
+        #   end
+        # end
+        model.supervise_state
       end
-      expose :supervise, as: :supervisor do |model, opts|
-        if model.supervise.blank?
-          {}
-        else
-          model.supervise.user.as_json
-        end
+      expose :supervisor do |model, opts|
+        model.supervisor
       end
+      # expose :supervise, as: :supervisor do |model, opts|
+      #   if model.supervise.blank?
+      #     {}
+      #   else
+      #     model.supervise.user.as_json
+      #   end
+      # end
     end
     
     # 我督促的目标
@@ -101,13 +105,16 @@ module API
       expose :state_intro do |model, opts|
         model.follow_state_intro
       end
-      expose :supervise, as: :supervisor do |model, opts|
-        if model.supervise.blank?
-          {}
-        else
-          model.supervise.user.as_json
-        end
+      expose :supervisor do |model, opts|
+        model.supervisor
       end
+      # expose :supervise, as: :supervisor do |model, opts|
+      #   if model.supervise.blank?
+      #     {}
+      #   else
+      #     model.supervise.user.as_json
+      #   end
+      # end
       expose :category, as: :type, using: API::Entities::Category
       # expose :user, as: :owner, using: API::Entities::User
     end
@@ -130,7 +137,7 @@ module API
         model.goals.where('expired_at <= ?', Time.now).count
       end
       expose :supervise_completed_goals_count do |model, opts|
-        model.goals.where('expired_at <= ? and supervisor_id is not null', Time.now).count
+        model.goals.joins(:supervises).where('goals.expired_at <= ? and goals.visible = ?', Time.now, true).where('supervises.state = ?', 'accepted').count
       end
       expose :goals, using: API::Entities::MyFollowingGoalDetail do |model, opts|
         model.goals.no_deleted.order('id DESC')
