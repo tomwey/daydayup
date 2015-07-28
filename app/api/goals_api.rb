@@ -85,6 +85,13 @@ module API
         # 根据距离来排序
         goals = goals.sort_by{ |g| g.distance }
         
+        user = User.find_by(private_token: params[:token])
+        if user.present?
+          goals.each do |g|
+            g.user.is_followed = user.following?(g.user)
+          end
+        end
+        
         { code: 0, message: 'ok', data: goals }
       end # end nearby
       
