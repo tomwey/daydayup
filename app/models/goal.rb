@@ -47,7 +47,7 @@ class Goal < ActiveRecord::Base
   end
   
   def supervisor
-    supervise = supervises.where(state: 'accepted').first
+    supervise = supervises.where(state: ['normal', 'accepted']).first
     if supervise.blank? or supervise.user.blank?
       {}
     else

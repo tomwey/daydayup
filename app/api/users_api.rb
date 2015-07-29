@@ -251,7 +251,7 @@ module API
           
           # 发送消息
           if u.push_opened_for?(4)
-            msg = user.nickname || user.mobile + '对我取消了关注'
+            msg = (user.nickname || user.mobile) + '对我取消了关注'
             to = []
             to << u.private_token
             PushService.push(msg, to)

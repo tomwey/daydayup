@@ -46,7 +46,7 @@ module API
         
         # 发送消息
         if goal.user.push_opened_for?(6)
-          msg = user.nickname || user.mobile + '请求督促您的目标' + goal.title
+          msg = (user.nickname || user.mobile) + '请求督促您的目标' + goal.title
           to = []
           to << goal.user.private_token
           PushService.push(msg, to)
