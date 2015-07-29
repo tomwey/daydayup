@@ -43,7 +43,7 @@ class Goal < ActiveRecord::Base
   end
   
   def self.unsupervise
-    joins(:supervises).no_abandon.where('goals.is_supervise = ? and goals.expired_at > ?', true, Time.zone.now).where('supervises.state != ? or supervises.state != ?', 'normal', 'accepted').order('goals.id desc')
+    no_abandon.where('is_supervise = ? and expired_at > ?', true, Time.zone.now).order('goals.id desc')
   end
   
   def supervisor

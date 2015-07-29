@@ -42,6 +42,8 @@ module API
         
         Supervise.create!(user_id: user.id, goal_id: goal.id)
         
+        goal.update_attribute(:is_supervise, false)
+        
         # 发送消息
         if goal.user.push_opened_for?(6)
           msg = user.nickname || user.mobile + '请求督促您的目标' + goal.title
@@ -108,6 +110,9 @@ module API
         end
         
         if supervise.refuse
+          
+          @goal.update_attribute(:is_supervise, true)
+          
           # 发送消息
           if supervise.user.push_opened_for?(6)
             msg = '我申请督促目标' + @goal.title + '被拒绝'
@@ -153,6 +158,7 @@ module API
         supervise.user.change_supervises_count(-1) if supervise.user
         
         if supervise.change#@goal.update_attribute(:supervisor_id, nil)
+          @goal.update_attribute(:is_supervise, true)
           { code: 0, message: "ok" }
         else
           { code: 4008, message: "更换督促人失败" }
