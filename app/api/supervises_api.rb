@@ -39,8 +39,12 @@ module API
         # if supervise.present?
         #   return { code: 4010, message: "您已经督促过该目标，不能督促了" }
         # end
-        
-        Supervise.create!(user_id: user.id, goal_id: goal.id)
+        s = Supervise.where(user_id: user.id, goal_id: goal.id).first
+        if s.blank?
+          Supervise.create!(user_id: user.id, goal_id: goal.id)
+        else
+          s.update_attribute(:state, 'normal')
+        end
         
         goal.update_attribute(:is_supervise, false)
         
