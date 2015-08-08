@@ -91,6 +91,10 @@ module API
       get '/show/:id' do
         @user = User.find_by(id: params[:id])
         
+        if @user.blank?
+          return { code: 4001, message: "未找到该用户" }
+        end
+        
         if params[:token]
           user = User.find_by(private_token: params[:token])
           @user.is_followed = user.following?(@user)
