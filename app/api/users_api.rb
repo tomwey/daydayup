@@ -116,6 +116,7 @@ module API
         requires :provider_id, type: String, desc: "第三方用户标示id"
         optional :mobile, type: String, desc: "手机号"
         optional :avatar, desc: "二进制图片数据"
+        optional :avatar_url, type: String, desc: "头像图片地址"
         optional :nickname, type: String, desc: "昵称"
         optional :gender, type: Integer, desc: "性别，1表示男，2表示女"
         optional :age, type: Integer, desc: "年龄"
@@ -142,9 +143,15 @@ module API
           user.mobile = params[:mobile]
         end
         
-        if params[:avatar]
+        if params[:avatar_url]
+          user.remote_avatar_url = params[:avatar_url]
+        elsif params[:avatar]
           user.avatar = params[:avatar]
         end
+        
+        # if params[:avatar]
+        #   user.avatar = params[:avatar]
+        # end
         
         if params[:nickname]
           user.nickname = params[:nickname]
