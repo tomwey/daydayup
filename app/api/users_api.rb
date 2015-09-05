@@ -25,16 +25,17 @@ module API
         #   return { code: 1004, message: "验证码无效" }
         # end
         
-        if not params[:mobile].to_s == '13678158221' # 苹果测试账号
-          result = check_code(params[:mobile], params[:code])
-          if result['code'].to_i == -1
-            return result
-          end
-        else
-          if not params[:code].to_s == '300195'
-            return { code: -1, message: "不正确的验证码" }
-          end
-        end
+        # 客户端验证code的正确性
+        # if not params[:mobile].to_s == '13678158221' # 苹果测试账号
+        #   result = check_code(params[:mobile], params[:code])
+        #   if result['code'].to_i == -1
+        #     return result
+        #   end
+        # else
+        #   if not params[:code].to_s == '300195'
+        #     return { code: -1, message: "不正确的验证码" }
+        #   end
+        # end
         
         # 快捷登录
         user = User.find_by(mobile: params[:mobile])
